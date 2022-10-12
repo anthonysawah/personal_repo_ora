@@ -8,8 +8,8 @@
       command:  /tasks/oracle_user_nc.py/oracle_user_nc.py 
       register: sqlscript
     - debug:
-      var: hostvars[inventory_hostname]
-      tags: debug_info
+        var: hostvars[inventory_hostname]
+        tags: debug_info
       delegate_to: 127.0.0.1
 
     - name: Create user
