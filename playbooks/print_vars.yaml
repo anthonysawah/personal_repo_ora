@@ -1,7 +1,6 @@
 ---
 - hosts: localhost
   gather_facts: false
-  - debug: extra_vars
   
   - name: "Ansible | List all known variables and facts"
   debug:
