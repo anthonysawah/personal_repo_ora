@@ -1,13 +1,5 @@
 ---
 - hosts: localhost
   gather_facts: false
-  vars:
-    var1: test
-  tasks:
-    - set_fact:
-        my_vars: "{{ vars.keys()|
-                     difference(hostvars[inventory_hostname].keys())|
-                     list|
-                     sort }}"
-    - debug:
-        var: my_vars
+  - debug: var=vars
+  - debug: extra_vars
