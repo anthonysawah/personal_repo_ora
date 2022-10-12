@@ -1,7 +1,8 @@
 ---
 - hosts: localhost
   gather_facts: false
-  
-  - name: "Ansible | List all known variables and facts"
+
+- name: Display all variables/facts known for a host
   debug:
     var: hostvars[inventory_hostname]
+    verbosity: 4
