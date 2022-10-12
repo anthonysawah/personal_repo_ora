@@ -7,6 +7,7 @@
     - name: Create User Script
       command:  /tasks/oracle_user_nc.py/oracle_user_nc.py 
       register: sqlscript
+      delegate_to: 127.0.0.1
       vars:
           Password: $encrypted$
           obj_priv: Select
@@ -16,16 +17,14 @@
             - CREATE SESSION
           tablespace: users
           username: 'c##asawah5'
-      message: |-
-        Create User {{ username }} identified by 
-        {{ Password }} default tablespace {{users}};
-        GRANT {{syspriv}} to {{username}};
-        GRANT {{obj_priv}} on {{object}} to {{username}};
-        debug:
+          message: |-
+            Create User {{ username }} identified by 
+            {{ Password }} default tablespace {{users}};
+            GRANT {{syspriv}} to {{username}};
+            GRANT {{obj_priv}} on {{object}} to {{username}};
+          debug:
           msg: "{{ message.split('\n') }}"
-
-        tags: debug_info
-      delegate_to: 127.0.0.1
+          tags: debug_info
 
     - name: Create user
       ansible.builtin.script: /Users/tonysawah/ansible/playbooks/orashell.sh "{{ sqlscript.stdout}}"
