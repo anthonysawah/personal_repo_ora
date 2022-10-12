@@ -7,8 +7,7 @@
     - name: Create User Script
       command:  /tasks/oracle_user_nc.py/oracle_user_nc.py 
       register: sqlscript
-    - debug:
-        vars:
+      vars:
           Password: $encrypted$
           obj_priv: Select
           object: sys.user$
@@ -24,6 +23,8 @@
         GRANT {{obj_priv}} on {{object}} to {{username}};
         debug:
           msg: "{{ message.split('\n') }}"
+
+        tags: debug_info
       delegate_to: 127.0.0.1
 
     - name: Create user
