@@ -1,0 +1,15 @@
+---
+- hosts: database
+  tasks:
+  
+   
+
+    - name: Create User Script
+      command: python3 /Users/tonysawah/.ansible/plugins/modules/oracle_user_nc.py 
+      register: sqlscript
+      delegate_to: 127.0.0.1
+
+    - name: Create user
+      ansible.builtin.script: /Users/tonysawah/ansible/playbooks/orashell.sh "{{ sqlscript.stdout}}"
+      with_items: "{{ groups['database'] }}"
+      become_user: oracle

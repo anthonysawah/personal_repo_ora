@@ -1,0 +1,1 @@
+create user testuser identified by test1234 profile default ;
