@@ -1,5 +1,5 @@
 ---
-- hosts: {{ target_hosts }}
+- hosts: "{{ target_hosts }}"
   tasks:
   roles:
     - { role: oracle_user }
