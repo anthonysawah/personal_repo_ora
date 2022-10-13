@@ -1,5 +1,5 @@
 ---
-- hosts: "{{ my_host_variable }}"
+- hosts: {{ my_host_variable }}
   tasks:
   roles:
     - { role: oracle_user }
