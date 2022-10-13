@@ -1,5 +1,4 @@
 ---
-- hosts: 192.168.57.3
-  tasks:
+- tasks:
   roles:
     - { role: oracle_user }
