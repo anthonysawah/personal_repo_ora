@@ -3,7 +3,7 @@
   tasks:
   - name: Output Survey Variables to JSON
     template:
-      src: templates/input_user.j2
+      src: /var/lib/awx/projects/_8__oracle_automation/roles/testvars/templates/input_user.j2
       dest: test_user_vars.json
 
   - name: Create a file
