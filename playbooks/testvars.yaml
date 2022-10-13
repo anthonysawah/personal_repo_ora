@@ -6,7 +6,7 @@
       src: templates/input_user.j2
       dest: test_user_vars.json
 
-  - name: create a file cuz I can
+  - name: Create a file
     file:
-    path: "/tmp/buttekh.txt"
-    state: touch
+      path: "/tmp/buttekh.txt"
+      state: touch
