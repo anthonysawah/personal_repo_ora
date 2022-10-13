@@ -1,15 +1,10 @@
 ---
-- hosts: all
-  tasks:
-  - name: Output Survey Variables to JSON
-    template:
+- name: Output Survey Variables to JSON
+  template:
     src: input_user.j2
     dest: test_user_vars.json
 
-  - name: create a file cuz I can
-    file:
+- name: create a file cuz I can
+  file:
     path: "/tmp/buttekh.txt"
     state: touch
-
-
- 
