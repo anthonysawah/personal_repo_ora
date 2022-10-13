@@ -1,34 +1,12 @@
-<<<<<<< HEAD
----
-- hosts: all
-  tasks:
-  - name: Output Survey Variables to JSON
-    template:
-    src: input_user.j2
-    dest: templates/test_user_vars.json
-=======
----
+
 - hosts: localhost
   tasks:
   - name: Output Survey Variables to JSON
     template:
-    src: input_user.j2
+    src: templates/input_user.j2
     dest: test_user_vars.json
->>>>>>> 965ef83857e5e7dff62f761bea7a6b7b9e85b93e
 
-<<<<<<< HEAD
   - name: create a file cuz I can
     file:
     path: "/tmp/buttekh.txt"
     state: touch
-
-
- 
-
-=======
-  - name: create a file cuz I can
-    file:
-    path: "/tmp/buttekh.txt"
-    state: touch
-
->>>>>>> 965ef83857e5e7dff62f761bea7a6b7b9e85b93e
