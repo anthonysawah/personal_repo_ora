@@ -15,7 +15,7 @@ do
 
 #Then connect to db
 sqlplus '/ as sysdba' << eof
-spool test.log
+spool $1.log
 set lines 300
 set pages 50000
 set echo on

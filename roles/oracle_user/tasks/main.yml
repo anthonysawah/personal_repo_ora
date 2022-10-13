@@ -4,7 +4,17 @@
     src: ora_user.json.j2
     dest: ora_user.json
 
+- name: Generate User Script via Python
+  command:  /tasks/oracle_user_nc.py/oracle_user_nc.py 
+
+- name: Generate Grants Script via Python
+  command:  /tasks/oracle_user_nc.py/oracle_user_nc.py 
+
+- name: Execute Script + Set Env Variables
+  ansible.builtin.script: orashell.sh "{{ sqlscript.stdout}}"
+  become_user: oracle
+
 - name: create a file cuz I can
   file:
-    path: "/tmp/buttekh.txt"
+    path: "/tmp/tempfile.txt"
     state: touch
