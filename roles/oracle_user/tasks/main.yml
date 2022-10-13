@@ -4,6 +4,11 @@
     src: ora_user.json.j2
     dest: ora_user.json
 
+- name: Find out playbook's path
+  shell: pwd
+  register: playbook_path_output
+- debug: var=playbook_path_output.stdout
+
 - name: Generate User Script via Python
   command:  oracle_user_nc.py 
 
