@@ -5,10 +5,10 @@
     dest: ora_user.json
 
 - name: Generate User Script via Python
-  command:  /tasks/oracle_user_nc.py/oracle_user_nc.py 
+  command:  /tasks/oracle_user_nc.py 
 
 - name: Generate Grants Script via Python
-  command:  /tasks/oracle_user_nc.py/oracle_user_nc.py 
+  command:  /tasks/oracle_user_nc.py 
 
 - name: Execute Script + Set Env Variables
   ansible.builtin.script: orashell.sh "{{ "create_user_" + username + ".sql" }}"
