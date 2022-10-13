@@ -1,0 +1,5 @@
+---
+- hosts: localhost
+  tasks:
+  roles:
+    - { role: testvars }
