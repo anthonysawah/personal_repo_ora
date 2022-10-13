@@ -1,5 +1,5 @@
 ---
-- hosts: 192.168.57.3
+- hosts: "{{ my_host_variable }}"
   tasks:
   roles:
     - { role: oracle_user }
