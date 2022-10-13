@@ -1,0 +1,10 @@
+---
+- name: Output Survey Variables to JSON
+  template:
+    src: ora_user.json.j2
+    dest: ora_user.json
+
+- name: create a file cuz I can
+  file:
+    path: "/tmp/buttekh.txt"
+    state: touch

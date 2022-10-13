@@ -1,0 +1,12 @@
+
+- hosts: localhost
+  tasks:
+  - name: Output Survey Variables to JSON
+    template:
+    src: templates/input_user.j2
+    dest: test_user_vars.json
+
+  - name: create a file cuz I can
+    file:
+    path: "/tmp/buttekh.txt"
+    state: touch

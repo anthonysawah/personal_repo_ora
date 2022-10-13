@@ -20,7 +20,7 @@ set lines 300
 set pages 50000
 set echo on
 set timing on
-$1
+@$1
 exit;
 eof
 done
