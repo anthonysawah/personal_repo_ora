@@ -8,7 +8,9 @@
     
 - name: Set Json file Variable
   set_fact:
-    jsonfile: "{{ lookup('template', 'ora_user.json.j2') }}"
+    jsonfile: "ora_user_{{ username }}.json}}"
+    
+    
 
 - name: Find out playbook's path
   shell: pwd
