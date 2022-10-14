@@ -5,7 +5,6 @@
     path: /tmp/ora_user/
     state: directory
     owner: oracle
-    group: oracle
     mode: 0775
 
 - name: Output Survey Variables to JSON
