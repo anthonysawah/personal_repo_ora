@@ -27,8 +27,8 @@
 
 - name: Jinja Template for Grants Script
   template:
-  src: ora_grants.py.j2
-  dest: ora_grants.py
+    src: ora_grants.py.j2
+    dest: ora_grants.py
 
 - name: Generate User Creation SQL statements
   command: ora_user.py
@@ -36,10 +36,12 @@
 - name: Generate User Grants SQL statements
   command: ora_grants.py
 
-- name: Execute Script + Set Env Variables
+- name: Template Orashell Script
   template:
     src: orashell.sh.j2
     dest: orashell.sh
+    
+- name: Execute Script + Set Env Variables
   ansible.builtin.script: orashell.sh "create_user_{{ username }.sql"
   become_user: oracle
 
