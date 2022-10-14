@@ -6,7 +6,6 @@
     state: directory
     owner: oracle
     mode: 0775
-    become_user: oracle
 
 - name: Output Survey Variables to JSON
   template:
@@ -39,9 +38,13 @@
 
 - name: Generate User Creation SQL statements
   command: /tmp/ora_user/ora_user.py
+  become: yes
+  become_user: oracle
 
 - name: Generate User Grants SQL statements
   command: /tmp/ora_user/ora_grants.py
+  become: yes
+  become_user: oracle
 
 - name: Template Orashell Script
   template:
