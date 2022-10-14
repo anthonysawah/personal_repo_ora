@@ -1,0 +1,97 @@
+{
+  "Users": [
+    {
+      "username": "{{ username }}",
+      "password": "{{ password }}",
+      "syspriv": [ {% for sys_priv in syspriv %} {{ syspriv }}",
+      "object": "{{ object }}",
+      "object_priv": "{{ obj_priv }}",
+      "tablespace" : "{{ tablespace }}",
+      "profile": "{{ profile }}"
+    }
+  ]
+}
+
+import pprint
+
+# Construct some test data
+JsonTitle = {"Users"}
+username =  {"C##asawah9"}
+Password= {"encrypted$"}
+syspriv = [ {"syspriv_vals": "CREATE SESSION" }, {"syspriv_vals":  "CREATE TABLE" } ]
+object_priv = {"Select, Update, Insert, Delete"}
+objects = [ {"objects": "sys.user$"}, {"objects":  "sys.dir$"} ]
+
+# Combine the data structures to match the required output
+scriptdata = [dict(zip(['object_priv', 'objects'], pair)) for pair in zip(object_priv, objects)]
+combined = {x: y for x, y in zip(username, scriptdata)}
+pprint.pprint(combined)
+ 
+
+template = jinja2.Template("""{{ username | tojson(indent=2) }}""")
+print(template.render(username=combined))
+{
+  "1": {
+    "team": "Team 1 - Team 2",
+    "time": "19:00"
+  },
+  "2": {
+    "team": "Team 3 - Team 4",
+    "time": "21:00"
+  },
+  "3": {
+    "team": "Team 5 - Team 6",
+    "time": "23:00"
+  }
+}
+
+
+{
+  "Users": [
+    {
+      "username": "C##asawah9",
+      "password": "Sa390944$",
+      "syspriv": [ 
+                  {"syspriv_vals": "CREATE SESSION" },
+                  {"syspriv_vals":  "CREATE TABLE" }
+    ],
+      "object": [
+                  {"objects": "sys.user$"},
+                  {"objects":  "sys.dir$"}
+      ],
+      "object_priv": "Select, Update, Insert, Delete",
+      "tablespace" : "users",
+      "profile": "default"
+    }
+      ]
+    }
+
+    {
+      "freeform": "",
+      "obj_priv": "Select, Update, Insert, Delete",
+      "object": "sys.user$, sys.dir$",
+      "password": "$encrypted$",
+      "profile": "default",
+      "syspriv": [
+       "CREATE SESSION",
+       "CREATE TABLE"
+      ],
+      "tablespace": "users",
+      "target_hosts": "192.168.57.3",
+      "username": "C##asawah9"
+     }
+
+<table>
+  <tr>
+      {% for obj in object[0] %}
+      {
+        "username": "{{ username }}",
+        "password": "{{ password }}",
+        "syspriv": "{{ syspriv }}",
+        "object": "{{ object }}",
+        "object_priv": "{{ obj_priv }}",
+        "tablespace" : "{{ tablespace }}",
+        "profile": "{{ profile }}"
+      }
+    ]
+  }

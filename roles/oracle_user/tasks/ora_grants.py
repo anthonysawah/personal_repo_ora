@@ -2,19 +2,60 @@
 import json
 
 # Read from ora_user.json
-with open("ora_user.json") as jsonFile:
+with open("test.json") as jsonFile:
         data = json.load(jsonFile)
         jsonData = data["Users"]
 
 # Generate SQL statement from ora_user.json
 
-for grantData in data['Users']:
-    if str(grantData['syspriv']) != "":
-        print("Grant " + str(grantData['syspriv']), " to " + (grantData['username']) + ";")
-    if str(grantData['object']) != "":
-        print("Grant " + str(grantData['object_priv']) + " ON " + str(grantData['object']) + " to " + (grantData['username']) + ";")
-grantsql = ("Grant " + str(grantData['object_priv']) + " ON " + str(grantData['object']) + " to " + (grantData['username']) + ";")
+#Main for Loop to extract Json Data
+for GrantScriptLoop in jsonData:
+    objpriv = GrantScriptLoop['object_priv']
+    user = GrantScriptLoop['username']
+                
+                
+                #For loop to get Sytem Privilege Values
+                
+    for syspriv in GrantScriptLoop['syspriv']:
+        for sysprivVals in syspriv['syspriv_vals'].splitlines():
+            
+            #For loop to get Sytem Privilege Values
+            
+            if not 'sysprivVals' in GrantScriptLoop['syspriv'] or len(GrantScriptLoop['syspriv']) == 0:
+                sql = ("Grant " + (sysprivVals) + " to " + user + ";")
+                sql += '\n'
 
-# Write Grant SQL statements to sqlfile for execution
-with open("create_user_" +(grantData['username']) + ".sql", "w") as sqlfile:
-    sqlfile.write(f'\n{grantsql}')
+                
+                 #For loop to get Object Privilege Values
+            
+    for object in GrantScriptLoop['object']:
+       for objects in object['objects'].splitlines():
+           if not 'objects' in GrantScriptLoop['object'] or len(GrantScriptLoop['object']) == 0:
+                sql+= ("Grant " + (objpriv) + " ON " + str(objects) + " to " + (user) + ";")
+                sql+= '\n'
+
+print(sql)
+           
+        
+        
+        
+ """    
+{
+    "Users": [
+      {
+        "username": "C##asawah9",
+        "password": "Sa390944$",
+        "syspriv": [ 
+                    {"syspriv_vals": "CREATE SESSION" },
+                    {"sys_priv_vals":  "CREATE TABLE" }
+      ],
+        "object": [
+                    {"objects": "sys.user$"},
+                    {"objects":  "sys.dir$"}
+        ],
+        "object_priv": "Select, Update, Insert, Delete",
+        "tablespace" : "users",
+        "profile": "default"
+      }
+        ]
+      }         """

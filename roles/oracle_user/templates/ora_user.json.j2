@@ -3,11 +3,20 @@
     {
       "username": "{{ username }}",
       "password": "{{ password }}",
-      "syspriv": "{{ syspriv }}",
-      "object": "{{ object }}",
-      "object_priv": "{{ obj_priv }}",
-      "tablespace" : "{{ tablespace }}",
-      "profile": "{{ profile }}"
-    }
+      "syspriv": [{% for syspriv2 in syspriv %}
+      {"syspriv_vals": " {{syspriv2}} "}
+        {%- if not loop.last %},{% else %}
+        {% endif %}
+        {% endfor %}]
+        "objects": [{% for object in objects.split(sep=',') %}{"object": " {{object}} "}{%- if not loop.last %},{% else %}  {% endif %} {% endfor %}],
+        "object_priv": "{{ obj_priv }}",
+        "tablespace" : "{{ tablespace }}",
+        "profile": "{{ profile }}"
+
+      ],
+
+    
+      ]
+}
   ]
 }
