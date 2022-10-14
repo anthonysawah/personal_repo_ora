@@ -1,14 +1,19 @@
 ---
 
+- name: Create Execution Dir
+  file:
+    path: /tmp/ora_user/
+    state: directory
+
 - name: Output Survey Variables to JSON
   template:
     src: ora_user.json.j2
-    dest: "ora_user{{ username }}.json}}"
+    dest: "/tmp/ora_user/ora_user{{ username }}.json"
 
     
 - name: Set Json file Variable
   set_fact:
-    jsonfile: "ora_user_{{ username }}.json"
+    jsonfile: "/tmp/ora_user/ora_user_{{ username }}.json"
     
     
 
@@ -21,27 +26,27 @@
 - name: Jinja Template for Users Script
   template:
     src: ora_user.py.j2
-    dest: ora_user.py
+    dest: /tmp/ora_user/ora_user.py
 
 
 - name: Jinja Template for Grants Script
   template:
     src: ora_grants.py.j2
-    dest: ora_grants.py
+    dest: /tmp/ora_user/ora_grants.py
 
 - name: Generate User Creation SQL statements
-  command: ora_user.py
+  command: /tmp/ora_user/ora_user.py
 
 - name: Generate User Grants SQL statements
-  command: ora_grants.py
+  command: /tmp/ora_user/ora_grants.py
 
 - name: Template Orashell Script
   template:
     src: orashell.sh.j2
-    dest: orashell.sh
+    dest: /tmp/ora_user/orashell.sh
   
 - name: Execute Script + Set Env Variables
-  ansible.builtin.script: orashell.sh "create_user_{{ username }}.sql"
+  ansible.builtin.script: /tmp/ora_user/orashell.sh "create_user_{{ username }}.sql"
   become_user: oracle
 
 - name: create a file cuz I can
