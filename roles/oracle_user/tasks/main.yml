@@ -2,7 +2,7 @@
 - name: Output Survey Variables to JSON
   template:
     src: ora_user.json.j2
-    dest: "{{ora_user + username + ".json"}}"
+    dest: "ora_user{{ username }}.json}}"
     register: jsonfile
 
 - name: Show copied file
@@ -30,7 +30,7 @@
   template:
     src: orashell.sh.j2
     dest: orashell.sh
-  ansible.builtin.script: orashell.sh "{{ "create_user_" + username + ".sql" }}"
+  ansible.builtin.script: orashell.sh "create_user_{{ username }.sql"
   become_user: oracle
 
 - name: create a file cuz I can
