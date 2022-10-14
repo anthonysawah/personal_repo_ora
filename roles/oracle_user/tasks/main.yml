@@ -7,11 +7,6 @@
     owner: oracle
     mode: 0777
     
-- name: Jinja Template for Users Script sql
-  template:
-    src: ora_user.sql.j2
-    dest: /tmp/ora_user/ora_user.sql.j2
-    mode: 0777    
 
 - name: Output Survey Variables to JSON
   template:
