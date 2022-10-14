@@ -1,13 +1,17 @@
 ---
+
 - name: Output Survey Variables to JSON
   template:
     src: ora_user.json.j2
     dest: "ora_user{{ username }}.json}}"
-    register: jsonfile
 
 - name: Show copied file
   debug:
     msg: "{{ jsonfile.dest }}"
+    
+- name: Set Json file Variable
+  set_fact:
+    jsonfile: "{{ lookup('template', 'ora_user.json.j2') }}"
 
 - name: Find out playbook's path
   shell: pwd
