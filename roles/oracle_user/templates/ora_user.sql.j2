@@ -1,0 +1,11 @@
+create user {{username}} identified by {{"password"}} default tablespace {{tablespace}} profile {{profile}};
+
+{% for obj in objects %}
+  grant {{obj_priv}}  on {{{{ object }} to {{ username }};
+{% endfor %}
+{% for sysprivs in syspriv %}
+  grant {{syspriv}} to {{username}};
+{% endfor %}
+
+
+%}
