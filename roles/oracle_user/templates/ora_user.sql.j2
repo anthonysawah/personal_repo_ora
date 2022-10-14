@@ -1,5 +1,10 @@
 ---
 create user {{username}} identified by {{"password"}} default tablespace {{tablespace}} profile {{profile}};
 
-grant {{obj_priv}} on {{ object }} to {{ username }};
+{% for colour in colours %}
+{% for obj in object %}
+  grant {{obj_priv}} on {{ obj.object }} to {{ username }};
+  grant {{obj_priv}} on {{ object }} to {{ username }};
+  grant {{obj_priv}} on {{ obj}} to {{ username }};
+{% endfor %}
 grant {{syspriv}} to {{username}};
