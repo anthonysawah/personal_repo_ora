@@ -45,7 +45,7 @@
   become: yes
   become_user: oracle
   
-  - name: change permissions
+- name: change permissions
   file:
     path: "{{ x_path }}"
     state: directory
