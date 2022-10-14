@@ -7,7 +7,7 @@
 
 - name: Show copied file
   debug:
-    msg: "{{ jsonfile.dest }}"
+    msg: "{{ dest }}"
     
 - name: Set Json file Variable
   set_fact:
