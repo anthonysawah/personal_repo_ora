@@ -10,7 +10,7 @@ __metaclass__ = type
 
 # Read from ora_user.json
 
-with open("ora_user.json") as jsonFile:
+with open("{{jsonfile}}") as jsonFile:
     data = json.load(jsonFile)
     jsonData = data["Users"]
 
