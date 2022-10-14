@@ -23,7 +23,7 @@ for user in data['Users']:
         createUsersql += ' default tablespace '  + (user['tablespace'])
     else: createUsersql += ' default tablespace USERS '
     if str(user['profile']) != "":
-        createUsersql += ' profile  ' (user['profile'])
+        createUsersql += ' profile  ' + (user['profile'])
     else: createUsersql += ' profile DEFAULT'
     createUsersql += ';'
  
