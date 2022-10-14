@@ -75,7 +75,7 @@
     sqlfile: "/tmp/ora_user/create_user_{{ username }}.sql"
     
 - name: Execute Script + Set Env Variables
-  shell: /tmp/ora_user/orashell.sh {{sqlfile}}
+  shell: /tmp/ora_user/orashell.sh
   become_user: oracle
 
 - name: create a file cuz I can
