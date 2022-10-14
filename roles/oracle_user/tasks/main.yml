@@ -6,6 +6,8 @@
     state: directory
     owner: oracle
     mode: 0777
+    
+    
 
 - name: Output Survey Variables to JSON
   template:
@@ -16,6 +18,7 @@
 - name: Set Json file Variable
   set_fact:
     jsonfile: "/tmp/ora_user/ora_user_{{ username }}.json"
+    x_path: "/tmp/ora_user/"
     
     
 
@@ -46,6 +49,13 @@
   command: /tmp/ora_user/ora_grants.py
   become: yes
   become_user: oracle
+  
+  - name: change permissions
+    file:
+    path: "{{ x_path}}"
+    state: directory
+    owner: oracle
+    mode: "0777"
 
 - name: Template Orashell Script
   template:
