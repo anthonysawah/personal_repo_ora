@@ -25,6 +25,7 @@ for user in data['Users']:
     if str(user['profile']) != "":
         createUsersql += ' profile  ' (user['profile'])
     else: createUsersql += ' profile DEFAULT'
+    createUsersql += ';'
  
 # Write Grant SQL statements to sqlfile for execution
 
