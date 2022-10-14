@@ -35,27 +35,3 @@ for GrantScriptLoop in jsonData:
                 sql+= '\n'
 
 print(sql)
-           
-        
-        
-        
- """    
-{
-    "Users": [
-      {
-        "username": "C##asawah9",
-        "password": "Sa390944$",
-        "syspriv": [ 
-                    {"syspriv_vals": "CREATE SESSION" },
-                    {"sys_priv_vals":  "CREATE TABLE" }
-      ],
-        "object": [
-                    {"objects": "sys.user$"},
-                    {"objects":  "sys.dir$"}
-        ],
-        "object_priv": "Select, Update, Insert, Delete",
-        "tablespace" : "users",
-        "profile": "default"
-      }
-        ]
-      }         """
