@@ -16,5 +16,5 @@ for grantData in data['Users']:
 grantsql = ("Grant " + str(grantData['object_priv']) + " ON " + str(grantData['object']) + " to " + (grantData['username']) + ";")
 
 # Write Grant SQL statements to sqlfile for execution
-with open("create_user_" +(grantData['username']) + ".sql", "w") as sqlfile:
+with open("create_user_" +(grantData['username']) + ".sql", "a") as sqlfile:
     sqlfile.write(grantsql)
