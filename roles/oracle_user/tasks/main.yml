@@ -16,14 +16,14 @@
 
 - name: Generate User Script via Python
   template:
-  src: ora_user.py.j2
-  dest: ora_user.py
+    src: ora_user.py.j2
+    dest: ora_user.py
   command:  ora_user.py 
 
 - name: Generate Grants Script via Python
   template:
-  src: ora_grants.py.j2
-  dest: ora_grants.py
+    src: ora_grants.py.j2
+    dest: ora_grants.py
   command:  ora_grants.py 
 
 - name: Execute Script + Set Env Variables
