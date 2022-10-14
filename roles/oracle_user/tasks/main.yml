@@ -6,7 +6,7 @@
     state: directory
     owner: oracle
     mode: 0775
-    become_user: oracles
+    become_user: oracle
 
 - name: Output Survey Variables to JSON
   template:
