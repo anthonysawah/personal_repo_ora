@@ -28,6 +28,6 @@ for user in data['Users']:
     createUsersql += ';'
  
 # Write Grant SQL statements to sqlfile for execution
-file.write("My String\n")
+
 with open("/tmp/ora_user/create_user_" +(user['username']) + ".sql", "w") as sqlfile:
     sqlfile.write(createUsersql + '\n')
