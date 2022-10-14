@@ -2,7 +2,6 @@
 create user {{username}} identified by {{"password"}} default tablespace {{tablespace}} profile {{profile}};
 
 {% for obj in object %}
-  grant {{obj_priv}} on {{ obj.object }} to {{ username }};
   grant {{obj_priv}} on {{ object }} to {{ username }};
   grant {{obj_priv}} on {{ obj}} to {{ username }};
 {% endfor %}
