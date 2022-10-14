@@ -17,4 +17,4 @@ grantsql = ("Grant " + str(grantData['object_priv']) + " ON " + str(grantData['o
 
 # Write Grant SQL statements to sqlfile for execution
 with open("create_user_" +(grantData['username']) + ".sql", "w") as sqlfile:
-    sqlfile.write(f'\n{grantsql}')
+    sqlfile.write(grantsql)
