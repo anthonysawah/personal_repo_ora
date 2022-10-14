@@ -44,6 +44,13 @@
   command: /tmp/ora_user/ora_user.py
   become: yes
   become_user: oracle
+  
+  - name: change permissions
+  file:
+    path: "{{ x_path }}"
+    state: directory
+    owner: oracle
+    mode: "0777"
 
 - name: Generate User Grants SQL statements
   command: /tmp/ora_user/ora_grants.py
