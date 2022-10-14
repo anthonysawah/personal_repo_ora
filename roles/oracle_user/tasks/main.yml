@@ -8,7 +8,7 @@
     
 - name: Set Json file Variable
   set_fact:
-    jsonfile: "ora_user_{{ username }}.json}}"
+    jsonfile: "ora_user_{{ username }}.json"
     
     
 
