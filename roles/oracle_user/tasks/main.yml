@@ -5,9 +5,6 @@
     src: ora_user.json.j2
     dest: "ora_user{{ username }}.json}}"
 
-- name: Show copied file
-  debug:
-    msg: "{{ dest }}"
     
 - name: Set Json file Variable
   set_fact:
