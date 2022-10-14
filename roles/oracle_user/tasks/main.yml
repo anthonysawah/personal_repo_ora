@@ -53,8 +53,12 @@
     dest: /tmp/ora_user/orashell.sh
     mode: 0777
   
+- name: set sqlfile var
+    set_fact:
+    sqlfile: "/tmp/ora_user/create_user_{{ username }}.sql"
+    
 - name: Execute Script + Set Env Variables
-  ansible.builtin.script: /tmp/ora_user/orashell.sh "create_user_{{ username }}.sql"
+  ansible.builtin.script: /tmp/ora_user/orashell.sh {{sqfile}}
   become_user: oracle
 
 - name: create a file cuz I can
