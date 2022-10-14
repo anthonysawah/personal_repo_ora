@@ -14,17 +14,23 @@
   register: playbook_path_output
 - debug: var=playbook_path_output.stdout
 
-- name: Generate User Script via Python
-  template:
-  src: ora_user.py.j2
-  dest: ora_user.py
-  command:  ora_user.py 
 
-- name: Generate Grants Script via Python
+- name: Jinja Template for Users Script
+  template:
+    src: ora_user.py.j2
+    dest: ora_user.py
+
+
+- name: Jinja Template for Grants Script
   template:
   src: ora_grants.py.j2
   dest: ora_grants.py
-  command:  ora_grants.py 
+
+- name: Generate User Creation SQL statements
+  command: ora_user.py
+
+- name: Generate User Grants SQL statements
+  command: ora_grants.py
 
 - name: Execute Script + Set Env Variables
   template:
