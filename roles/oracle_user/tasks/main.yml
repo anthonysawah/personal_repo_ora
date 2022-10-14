@@ -53,7 +53,7 @@
     mode: "0777"
 
 - name: Generate User Grants SQL statements
-  command: /tmp/ora_user/ora_grants.py
+  command: python /tmp/ora_user/ora_grants.py
   become: yes
   become_user: oracle
   
