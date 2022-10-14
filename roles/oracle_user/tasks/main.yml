@@ -50,9 +50,9 @@
   become: yes
   become_user: oracle
   
-  - name: change permissions
-    file:
-    path: "{{ x_path}}"
+- name: change permissions
+  file:
+    path: "{{ x_path }}"
     state: directory
     owner: oracle
     mode: "0777"
