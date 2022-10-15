@@ -60,6 +60,11 @@
     mode: "0777"
 
 
+- name: Check to see if the .SQL file exists
+  stat:
+    path: /tmp/ora_user/create_user_{{username}}.sql
+  register: register_name
+
 
 - name: Generate User Grants SQL statements
   command: python /tmp/ora_user/ora_grants.py
