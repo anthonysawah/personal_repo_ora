@@ -12,9 +12,10 @@
     msg: "{{ object }}"
   loop: "{{ object.split('\n') }}"
   
-- name: set fact 
+- name: " Set variables"
   set_fact:
-    - objects: "{{object}}"
+    objects: "{{object}}"
+  
 
 - name: Output Survey Variables to JSON
   template:
