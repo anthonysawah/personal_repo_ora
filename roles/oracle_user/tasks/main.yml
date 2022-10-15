@@ -17,7 +17,7 @@
     src: ora_user.json.j2
     dest: "/tmp/ora_user/ora_user_{{ username }}.json"
     vars:
-    - objects: {{object}}
+    - objects: "{{object}}"
 
     
 - name: Set Json file Variable
