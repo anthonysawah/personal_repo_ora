@@ -56,9 +56,7 @@
 
 
 - name: Generate User Creation SQL statements
-  ansible.builtin.script:
-    executable: python
-    cmd: python /tmp/ora_user/ora_user.py
+  command: python /tmp/ora_user/ora_user.py
   register: ora_user_output
 
 - name: change permissions
