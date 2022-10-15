@@ -5,7 +5,7 @@
     path: /tmp/ora_user/
     state: directory
     owner: oracle
-    mode: 0777
+    mode: 7777
     
 - name: run it as a list
   debug:
@@ -39,36 +39,30 @@
   template:
     src: ora_user.py.j2
     dest: /tmp/ora_user/ora_user.py
-    mode: 0777
+    mode: 7777
 
 - name: Jinja Template for Grants Script
   template:
     src: ora_grants.py.j2
     dest: /tmp/ora_user/ora_grants.py
-    mode: 0777
+    mode: 7777
 
 - name: change permissions
   file:
     path: "{{ x_path }}"
     state: directory
     owner: oracle
-    mode: "0777"
+    mode: "7777"
 
 - name: whoami
   command: whoami
   register: ora_user_output
-  become_user: oracle
 
 - name: Generate User Script SQL
   command: /usr/bin/python /tmp/ora_user/ora_user.py
 
 
-- name: change permissions
-  file:
-    path: "{{ x_path }}"
-    state: directory
-    owner: oracle
-    mode: "777"
+
 
 
 - name: Check to see if the .SQL file exists
@@ -78,24 +72,19 @@
 
 - name: fail if file doesn't exist
   fail: msg="The file didn't get created"
-  when: filename.path.exists
+  when: filename.exists
 
 
 - name: Generate Grant Script SQL
   command: /usr/bin/python /tmp/ora_user/ora_grants.py
   
-- name: change permissions
-  file:
-    path: "{{ x_path }}"
-    state: directory
-    owner: oracle
-    mode: "777"
+
 
 - name: Template Orashell Script
   template:
     src: orashell.sh.j2
     dest: /tmp/ora_user/orashell.sh
-    mode: 777
+    mode: 7777
     
 - name: Execute Script + Set Env Variables
   shell: /usr/bin/bash /tmp/ora_user/orashell.sh
@@ -107,5 +96,5 @@
     src: /tmp/ora_user/create_user_{{username}}.sql.log
     dest: /tmp/
     owner: oracle     
-    mode: 777
+    mode: 7777
     remote_src: yes
