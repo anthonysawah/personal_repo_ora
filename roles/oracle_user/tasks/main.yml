@@ -56,7 +56,7 @@
 
 
 - name: Generate User Creation SQL statements
-  command: python /tmp/ora_user/ora_user.py
+  command: /usr/bin/python /tmp/ora_user/ora_user.py
   register: ora_user_output
   become_user: oracle
 
@@ -75,8 +75,7 @@
 
 
 - name: Generate User Grants SQL statements
-  command: python /tmp/ora_user/ora_grants.py
-  become: yes
+  command: /usr/bin/python /tmp/ora_user/ora_grants.py
   become_user: oracle
   
 - name: change permissions
@@ -93,7 +92,7 @@
     mode: 777
     
 - name: Execute Script + Set Env Variables
-  shell: /tmp/ora_user/orashell.sh
+  shell: /usr/bin/bash /tmp/ora_user/orashell.sh
   become_user: oracle
 
 
