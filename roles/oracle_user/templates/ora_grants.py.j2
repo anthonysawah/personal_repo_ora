@@ -46,8 +46,13 @@ for GrantScriptLoop in jsonData:
 
 print(sql)
 
-sqlfile = ("create_user_" + user + ".sql")
+filename = ("create_user_" + user + ".sql")
 with open("create_user_" + user  + ".sql", "a") as sqlfile:
     sqlfile.write("\n")
     sqlfile.write(sql)
-print ("Your SQL File is: " + str(sqlfile))
+print ("Your SQL File is: " + str(filename))
+
+import os.path
+
+file_exists = os.path.exists(filename)
+print(file_exists)
