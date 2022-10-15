@@ -45,3 +45,9 @@ for GrantScriptLoop in jsonData:
                 sql+= '\n'
 
 print(sql)
+
+sqlfile = ("create_user_" + user + ".sql")
+with open("create_user_" + user  + ".sql", "a") as sqlfile:
+    sqlfile.write("\n")
+    sqlfile.write(sql)
+print ("Your SQL File is: " + sqlfile)
