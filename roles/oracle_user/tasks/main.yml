@@ -5,7 +5,7 @@
     path: /tmp/ora_user/
     state: directory
     owner: oracle
-    mode: 7777
+    mode: 0777
     
 - name: run it as a list
   debug:
