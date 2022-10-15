@@ -47,12 +47,9 @@
     dest: /tmp/ora_user/ora_grants.py
     mode: 0777
 
-- name: Generate User Creation SQL statements
-  command: python /tmp/ora_user/ora_user.py
-  become: yes
-  become_user: oracle
 
-- name: run cars.py script
+
+- name: Generate User Creation SQL statements
   ansible.builtin.script:
     executable: python
     cmd: /tmp/ora_user/ora_user.py
