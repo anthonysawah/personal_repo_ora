@@ -86,7 +86,7 @@
 
 - name: copying file with playbook
   copy:
-    src: /tmp/ora_user/create_user_"{{username}}".sql.log
+    src: /tmp/ora_user/create_user_{{username}}.sql.log
     dest: /tmp/
     owner: oracle     
     mode: 0777
