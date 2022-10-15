@@ -62,7 +62,8 @@
   register: ora_user_output
 
 - name: Generate User Script SQL
-  command: /usr/bin/python /tmp/ora_user/ora_user.py
+  script: /tmp/ora_user/ora_user.py
+  executable: /usr/bin/python
   become: yes
   become_user: oracle
 
