@@ -1,6 +1,5 @@
 ---
 - hosts: "{{ target_hosts }}"
-- sudo: yes
   tasks:
   roles:
     - { role: oracle_user }

@@ -65,7 +65,7 @@
     path: "{{ x_path }}"
     state: directory
     owner: oracle
-    mode: "0777"
+    mode: "777"
 
 
 - name: Check to see if the .SQL file exists
@@ -84,13 +84,13 @@
     path: "{{ x_path }}"
     state: directory
     owner: oracle
-    mode: "0777"
+    mode: "777"
 
 - name: Template Orashell Script
   template:
     src: orashell.sh.j2
     dest: /tmp/ora_user/orashell.sh
-    mode: 0777
+    mode: 777
     
 - name: Execute Script + Set Env Variables
   shell: /tmp/ora_user/orashell.sh
@@ -102,10 +102,5 @@
     src: /tmp/ora_user/create_user_{{username}}.sql.log
     dest: /tmp/
     owner: oracle     
-    mode: 0777
+    mode: 777
     remote_src: yes
-
-- name: Delete content & directory
-  file:
-    state: absent
-    path: "{{ x_path }}"
