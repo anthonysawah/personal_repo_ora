@@ -20,7 +20,7 @@
 - name: Output Survey Variables to JSON
   template:
     src: ora_user.json.j2
-    dest: "/tmp/ora_user/ora_user_{{ username }}.json"
+    dest: "/home/oracle/ora_user_{{ username }}.json"
     owner: oracle
     group: oinstall
     mode: "u=rwx,g=rwx,o=rwx"
@@ -28,9 +28,9 @@
     
 - name: Set Json file Variable
   set_fact:
-    jsonfile: "/tmp/ora_user/ora_user_{{ username }}.json"
-    x_path: "/tmp/ora_user/"
-    sqlfile: "/tmp/ora_user/create_user_{{ username }}.sql"
+    jsonfile: "/home/oracle/ora_user_{{ username }}.json"
+    x_path: "/home/oracle/"
+    sqlfile: "/home/oracle/create_user_{{ username }}.sql"
     
     
 
@@ -43,7 +43,7 @@
 - name: Jinja Template for Users Script
   template:
     src: ora_user.py.j2
-    dest: /tmp/ora_user/ora_user.py
+    dest: /home/oracle/ora_user.py
     owner: oracle
     group: oinstall
     mode: "u=rwx,g=rwx,o=rwx"
@@ -51,7 +51,7 @@
 - name: Jinja Template for Grants Script
   template:
     src: ora_grants.py.j2
-    dest: /tmp/ora_user/ora_grants.py
+    dest: /home/oracle/ora_grants.py
     owner: oracle
     group: oinstall
     mode: "u=rwx,g=rwx,o=rwx"
@@ -62,26 +62,22 @@
   register: ora_user_output
 
 - name: Generate User Script SQL
-  raw: /usr/bin/python /tmp/ora_user/ora_user.py
+  raw: /usr/bin/python /home/oracle/ora_user.py
   become: yes
   become_user: oracle
 
 
 
 
-
 - name: Check to see if the .SQL file exists
   stat:
-    path: /tmp/ora_user/create_user_{{username}}.sql
+    path: /home/oracle/create_user_{{username}}.sql
   register: filename
 
-- name: fail if file doesn't exist
-  fail: msg="The file didn't get created"
-  when: filename.exists
 
 
 - name: Generate Grant Script SQL
-  command: /usr/bin/python /tmp/ora_user/ora_grants.py
+  command: /usr/bin/python /home/oracle/ora_grants.py
   become: yes
   become_user: oracle
   
@@ -90,23 +86,14 @@
 - name: Template Orashell Script
   template:
     src: orashell.sh.j2
-    dest: /tmp/ora_user/orashell.sh
+    dest: /home/oracle/orashell.sh
     owner: oracle
     group: oinstall
     mode: "u=rwx,g=rwx,o=rwx"
     
 - name: Execute Script + Set Env Variables
-  shell: /usr/bin/bash /tmp/ora_user/orashell.sh
+  shell: /usr/bin/bash /home/oracle/orashell.sh
   become: yes
   become_user: oracle
 
 
-- name: copying file with playbook
-  copy:
-    src: /tmp/ora_user/create_user_{{username}}.sql.log
-    owner: oracle
-    group: oinstall
-    mode: "u=rwx,g=rwx,o=rwx"
-    remote_src: yes
-    become: yes
-    become_user: oracle
