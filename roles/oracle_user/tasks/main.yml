@@ -62,7 +62,7 @@
   register: ora_user_output
 
 - name: Generate User Script SQL
-  script: /tmp/ora_user/ora_user.py
+  raw: /usr/bin/python /tmp/ora_user/ora_user.py
   become: yes
   become_user: oracle
 
