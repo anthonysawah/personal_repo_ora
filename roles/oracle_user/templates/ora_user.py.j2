@@ -26,8 +26,9 @@ for GrantScriptLoop in jsonData:
         createUsersql += ' default tablespace '  + GrantScriptLoop['tablespace']
     else: createUsersql += ' default tablespace USERS '
     if GrantScriptLoop['profile'] != "":
-        createUsersql += ' profile  ' GrantScriptLoop['profile']
+        createUsersql += ' profile  ' + GrantScriptLoop['profile']
     else: createUsersql += ' profile DEFAULT'
+createUsersql +=';'
  
 # Write Grant SQL statements to sqlfile for execution
 
