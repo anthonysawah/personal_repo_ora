@@ -13,12 +13,26 @@
   loop: "{{ objects.split('\n') }}"
   
 
+  
+
 - name: Output Survey Variables to JSON
   template:
     src: ora_user.json.j2
     dest: "/tmp/ora_user/ora_user_{{ username }}.json"
 
     
+- name: Set Json file Variable
+  set_fact:
+    jsonfile: "/tmp/ora_user/ora_user_{{ username }}.json"
+    x_path: "/tmp/ora_user/"
+    sqlfile: "/tmp/ora_user/create_user_{{ username }}.sql"
+    
+    
+
+- name: Find out playbook's path
+  shell: pwd
+  register: playbook_path_output
+- debug: var=playbook_path_output.stdout
 
 
 - name: Jinja Template for Users Script
