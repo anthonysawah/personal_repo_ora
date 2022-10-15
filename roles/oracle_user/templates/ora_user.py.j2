@@ -31,6 +31,7 @@ for GrantScriptLoop in jsonData:
 createUsersql +=';'
  
 # Write Grant SQL statements to sqlfile for execution
-
-with open("create_user_" + user + ".sql", "w") as outfile:
+sqlfile = ("create_user_" + user + ".sql")
+with open(sqlfile, "w") as outfile:
     outfile.write(createUsersql)
+print ("Your SQL File is: " + sqlfile)
