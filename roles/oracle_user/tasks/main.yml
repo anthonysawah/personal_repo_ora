@@ -89,4 +89,4 @@
 - name: Delete content & directory
   file:
     state: absent
-    path: x_path
+    path: "{{ x_path }}"
