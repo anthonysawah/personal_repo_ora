@@ -44,12 +44,16 @@
     src: ora_user.py.j2
     dest: /tmp/ora_user/ora_user.py
     mode: 777
+    become: yes
+    become_user: oracle
 
 - name: Jinja Template for Grants Script
   template:
     src: ora_grants.py.j2
     dest: /tmp/ora_user/ora_grants.py
     mode: 777
+    become: yes
+    become_user: oracle
 
 - name: change permissions
   file:
@@ -65,6 +69,7 @@
 
 - name: Generate User Script SQL
   command: /usr/bin/python /tmp/ora_user/ora_user.py
+  become: yes
   become_user: oracle
 
 
@@ -83,6 +88,7 @@
 
 - name: Generate Grant Script SQL
   command: /usr/bin/python /tmp/ora_user/ora_grants.py
+  become: yes
   become_user: oracle
   
 
@@ -92,9 +98,12 @@
     src: orashell.sh.j2
     dest: /tmp/ora_user/orashell.sh
     mode: 777
+    become: yes
+    become_user: oracle
     
 - name: Execute Script + Set Env Variables
   shell: /usr/bin/bash /tmp/ora_user/orashell.sh
+  become: yes
   become_user: oracle
 
 
@@ -105,3 +114,5 @@
     owner: oracle     
     mode: 777
     remote_src: yes
+    become: yes
+    become_user: oracle
