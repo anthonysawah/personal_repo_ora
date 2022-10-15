@@ -51,7 +51,13 @@
   command: python /tmp/ora_user/ora_user.py
   become: yes
   become_user: oracle
-  
+
+- name: run cars.py script
+  ansible.builtin.script:
+    executable: python
+    cmd: /tmp/ora_user/ora_user.py
+  register: ora_user_output
+
 - name: change permissions
   file:
     path: "{{ x_path }}"
