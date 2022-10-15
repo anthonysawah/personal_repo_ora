@@ -47,6 +47,12 @@
     dest: /tmp/ora_user/ora_grants.py
     mode: 0777
 
+- name: change permissions
+  file:
+    path: "{{ x_path }}"
+    state: directory
+    owner: oracle
+    mode: "0777"
 
 
 - name: Generate User Creation SQL statements
