@@ -21,9 +21,9 @@
   template:
     src: ora_user.json.j2
     dest: "/tmp/ora_user/ora_user_{{ username }}.json"
-    mode: 777
-    become: yes
-    become_user: oracle
+    owner: oracle
+    group: oinstall
+    mode: "u=rwx,g=rwx,o=rwx"
 
     
 - name: Set Json file Variable
@@ -44,25 +44,18 @@
   template:
     src: ora_user.py.j2
     dest: /tmp/ora_user/ora_user.py
-    mode: 777
-    become: yes
-    become_user: oracle
+    owner: oracle
+    group: oinstall
+    mode: "u=rwx,g=rwx,o=rwx"
 
 - name: Jinja Template for Grants Script
   template:
     src: ora_grants.py.j2
     dest: /tmp/ora_user/ora_grants.py
-    mode: 777
-    become: yes
-    become_user: oracle
-
-- name: change permissions
-  file:
-    path: "{{ x_path }}"
-    state: directory
     owner: oracle
-    mode: 777
-    recurse: yes
+    group: oinstall
+    mode: "u=rwx,g=rwx,o=rwx"
+
 
 - name: whoami
   command: whoami
@@ -98,9 +91,9 @@
   template:
     src: orashell.sh.j2
     dest: /tmp/ora_user/orashell.sh
-    mode: 777
-    become: yes
-    become_user: oracle
+    owner: oracle
+    group: oinstall
+    mode: "u=rwx,g=rwx,o=rwx"
     
 - name: Execute Script + Set Env Variables
   shell: /usr/bin/bash /tmp/ora_user/orashell.sh
@@ -111,9 +104,9 @@
 - name: copying file with playbook
   copy:
     src: /tmp/ora_user/create_user_{{username}}.sql.log
-    dest: /tmp/
-    owner: oracle     
-    mode: 777
+    owner: oracle
+    group: oinstall
+    mode: "u=rwx,g=rwx,o=rwx"
     remote_src: yes
     become: yes
     become_user: oracle
