@@ -60,9 +60,7 @@
   become_user: oracle
 
 - name: Generate User Script SQL
-  ansible.builtin.script: /tmp/ora_user/ora_user.py
-  args:
-    executable: /usr/bin/python
+  command: /usr/bin/python /tmp/ora_user/ora_user.py
 
 
 - name: change permissions
@@ -84,9 +82,7 @@
 
 
 - name: Generate Grant Script SQL
-  ansible.builtin.script: /tmp/ora_user/ora_grants.py
-  args:
-    executable: /usr/bin/python
+  command: /usr/bin/python /tmp/ora_user/ora_grants.py
   
 - name: change permissions
   file:
