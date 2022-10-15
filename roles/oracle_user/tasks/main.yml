@@ -85,3 +85,8 @@
   file:
     path: "/tmp/tempfile.txt"
     state: touch
+
+- name: Delete content & directory
+  file:
+    state: absent
+    path: x_path
