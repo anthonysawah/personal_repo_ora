@@ -54,6 +54,10 @@
     owner: oracle
     mode: "0777"
 
+- name: whoami
+  command: whoami
+  register: ora_user_output
+  become_user: oracle
 
 - name: Generate User Creation SQL statements
   command: /usr/bin/python /tmp/ora_user/ora_user.py
