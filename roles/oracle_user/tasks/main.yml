@@ -9,8 +9,8 @@
     
 - name: run it as a list
   debug:
-    msg: "{{ object }}"
-  loop: "{{ object.split('\n') }}"
+    msg: "{{ objects }}"
+  loop: "{{ objects.split('\n') }}"
   
 
   
