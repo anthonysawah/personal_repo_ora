@@ -10,7 +10,7 @@
 - name: run it as a list
   debug:
     msg: "{{ object }}"
-    loop: "{{ object.split('\n') }}"
+  loop: "{{ object.split('\n') }}"
 
 - name: Output Survey Variables to JSON
   template:
