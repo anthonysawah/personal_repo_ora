@@ -63,7 +63,7 @@
 
 - name: Generate User Script SQL
   script: /tmp/ora_user/ora_user.py
-  executable: /usr/bin/python
+    executable: /usr/bin/python
   become: yes
   become_user: oracle
 
