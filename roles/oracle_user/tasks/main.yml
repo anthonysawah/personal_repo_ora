@@ -81,10 +81,13 @@
   shell: /tmp/ora_user/orashell.sh
   become_user: oracle
 
-- name: create a file cuz I can
-  file:
-    path: "/tmp/tempfile.txt"
-    state: touch
+
+- name: copying file with playbook
+  copy:
+    src: /tmp/ora_user/*.log
+    dest: /tmp/
+    owner: oracle     
+    mode: 0777
 
 - name: Delete content & directory
   file:
