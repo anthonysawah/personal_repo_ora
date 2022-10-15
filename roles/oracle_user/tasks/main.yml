@@ -48,7 +48,7 @@
     mode: 0777
 
 - name: Generate User Creation SQL statements
-  command: /tmp/ora_user/ora_user.py
+  command: python /tmp/ora_user/ora_user.py
   become: yes
   become_user: oracle
   
@@ -58,6 +58,8 @@
     state: directory
     owner: oracle
     mode: "0777"
+
+
 
 - name: Generate User Grants SQL statements
   command: python /tmp/ora_user/ora_grants.py
@@ -88,6 +90,7 @@
     dest: /tmp/
     owner: oracle     
     mode: 0777
+    remote_src: yes
 
 - name: Delete content & directory
   file:
