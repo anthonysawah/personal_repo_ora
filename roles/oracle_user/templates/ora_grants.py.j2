@@ -1,3 +1,13 @@
+#!/usr/bin/python
+
+
+
+import sys
+import getopt
+import json
+
+__metaclass__ = type
+
 # Loading a JSON File to a Python Dictionary
 import json
 
@@ -8,13 +18,30 @@ with open("{{jsonfile}}") as jsonFile:
 
 # Generate SQL statement from ora_user.json
 
-for grantData in data['Users']:
-    if str(grantData['syspriv']) != "":
-        print("Grant " + str(grantData['syspriv']), " to " + (grantData['username']) + ";")
-    if str(grantData['object']) != "":
-        print("Grant " + str(grantData['object_priv']) + " ON " + str(grantData['object']) + " to " + (grantData['username']) + ";")
-grantsql = ("Grant " + str(grantData['object_priv']) + " ON " + str(grantData['object']) + " to " + (grantData['username']) + ";")
+#Main for Loop to extract Json Data
+for GrantScriptLoop in jsonData:
+    objpriv = GrantScriptLoop['object_priv']
+    user = GrantScriptLoop['username']
+                
+                
+                #For loop to get Sytem Privilege Values
+                
+    for syspriv in GrantScriptLoop['syspriv']:
+        for sysprivVals in syspriv['syspriv_vals'].splitlines():
+            
+            #For loop to get Sytem Privilege Values
+            
+            if not 'sysprivVals' in GrantScriptLoop['syspriv'] or len(GrantScriptLoop['syspriv']) == 0:
+                sql = ("Grant " + (sysprivVals) + " to " + user + ";")
+                sql += '\n'
 
-# Write Grant SQL statements to sqlfile for execution
-with open("create_user_" +(grantData['username']) + ".sql", "a") as sqlfile:
-    sqlfile.write(grantsql)
+                
+                 #For loop to get Object Privilege Values
+            
+    for object in GrantScriptLoop['objects']:
+       for objects in object['object'].splitlines():
+           if not 'object' in GrantScriptLoop['objects'] or len(GrantScriptLoop['object']) == 0:
+                sql+= ("Grant " + (objpriv) + " ON " + str(objects) + " to " + (user) + ";")
+                sql+= '\n'
+
+print(sql)
