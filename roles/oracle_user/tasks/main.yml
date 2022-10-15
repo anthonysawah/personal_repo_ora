@@ -65,6 +65,7 @@
   script: /tmp/ora_user/ora_user.py
   become: yes
   become_user: oracle
+  remote_src: "{{ target_hosts }}"
 
 
 
