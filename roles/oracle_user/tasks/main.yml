@@ -85,7 +85,7 @@
   become: yes
   become_user: oracle
   replace: 
-    path: "{{ item }}"
+    path: {{ item }}
     regexp: '{{password}}'
     replace: 'passwdencrypted'
     with_items:
