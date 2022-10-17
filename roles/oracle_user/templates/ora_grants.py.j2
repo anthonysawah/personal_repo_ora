@@ -32,7 +32,7 @@ for GrantScriptLoop in jsonData:
             #For loop to get Sytem Privilege Values
             
             if not 'sysprivVals' in GrantScriptLoop['syspriv'] or len(GrantScriptLoop['syspriv']) == 0:
-                sql = ("Grant " + (sysprivVals) + " to " + user + ";")
+                sql += ("Grant " + (sysprivVals) + " to " + user + ";")
                 sql += '\n'
 
                 
