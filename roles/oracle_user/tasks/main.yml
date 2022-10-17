@@ -90,6 +90,6 @@
 - name: Replace foo with bar in the files
   replace:
     path: "{{item.path}}"
-    regexp: "Sa390944$"
+    regexp: "{{Sa390944$}}"
     replace: 'passwdencrypted'
   with_items: "{{ userscripts.files }}"
