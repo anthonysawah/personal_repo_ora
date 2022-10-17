@@ -41,16 +41,11 @@
     mode: "u=rwx,g=rwx,o=rwx"
 
 
-- name: whoami
-  command: whoami
-  register: ora_user_output
 
 - name: Generate User Script SQL
   raw: /usr/bin/python /home/oracle/ora_user.py
   become: yes
   become_user: oracle
-
-
 
 
 - name: Check to see if the .SQL file exists
@@ -81,13 +76,13 @@
   become_user: oracle
 
 
-- name: Find all of the files inside this directory
+- name: Find create user files from directory
   find:
     paths: "/home/oracle/"
     patterns: "create_user_{{username}}.*"
   register: userscripts
 
-- name: Replace foo with bar in the files
+- name: Clean password from files
   replace:
     path: "{{item.path}}"
     regexp: "{{password}}"
