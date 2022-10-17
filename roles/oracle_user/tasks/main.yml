@@ -93,4 +93,15 @@
     - /home/oracle/create_user_{{username}}.sql.log
     - /home/oracle/create_user_{{username}}.json
 
+- name: Find all of the files inside this directory
+  find:
+    paths: "/home/oracle/"
+    patterns: "create_user_{{username}}.*"
+  register: userscripts
 
+- name: Replace foo with bar in the files
+  replace:
+    path: "{{ item.path }}"
+    regexp: '{{password}}'
+    replace: 'passwdencrypted'
+  with_items: "{{ userscripts }}"
