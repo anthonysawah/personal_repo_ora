@@ -1,21 +1,5 @@
 ---
 
-- name: Create Execution Dir
-  file:
-    path: /tmp/ora_user/
-    state: directory
-    owner: oracle
-    group: oinstall
-    mode: "u=rwx,g=rwx,o=rwx"
-    recurse: yes
-    
-- name: run it as a list
-  debug:
-    msg: "{{ objects }}"
-  loop: "{{ objects.split('\n') }}"
-  
-
-  
 
 - name: Output Survey Variables to JSON
   template:
@@ -95,5 +79,13 @@
   shell: /usr/bin/bash /home/oracle/orashell.sh
   become: yes
   become_user: oracle
+
+- name: "Replace line in file examples"
+  become: yes
+  become_user: oracle
+  replace: 
+    path: /home/oracle/create_user_{{username}}.*
+    regexp: '{{password}}'
+    replace: 'passwdencrypted'
 
 
