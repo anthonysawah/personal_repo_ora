@@ -81,18 +81,6 @@
   become_user: oracle
 
 
-- name: "Replace line in file examples"
-  become: yes
-  become_user: oracle
-  replace: 
-    path: "{{ items }}"
-    regexp: '{{password}}'
-    replace: 'passwdencrypted'
-    with_items:
-    - /home/oracle/create_user_{{username}}.sql
-    - /home/oracle/create_user_{{username}}.sql.log
-    - /home/oracle/create_user_{{username}}.json
-
 - name: Find all of the files inside this directory
   find:
     paths: "/home/oracle/"
