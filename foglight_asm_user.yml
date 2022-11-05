@@ -1,0 +1,5 @@
+---
+- hosts: "{{ target_hosts }}"
+  tasks:
+  roles:
+    - { role: foglight_asm_user }
