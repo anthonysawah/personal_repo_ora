@@ -1,0 +1,90 @@
+---
+
+
+- name: Output Survey Variables to JSON
+  template:
+    src: ora_user.json.j2
+    dest: "/home/oracle/ora_user_{{ username }}.json"
+    owner: oracle
+    group: oinstall
+    mode: "u=rwx,g=rwx,o=rwx"
+
+    
+- name: Set Json file Variable
+  set_fact:
+    jsonfile: "/home/oracle/ora_user_{{ username }}.json"
+    x_path: "/home/oracle/"
+    sqlfile: "/home/oracle/create_user_{{ username }}.sql"
+    
+    
+
+- name: Find out playbook's path
+  shell: pwd
+  register: playbook_path_output
+- debug: var=playbook_path_output.stdout
+
+
+- name: Jinja Template for Users Script
+  template:
+    src: ora_user.py.j2
+    dest: /home/oracle/ora_user.py
+    owner: oracle
+    group: oinstall
+    mode: "u=rwx,g=rwx,o=rwx"
+
+- name: Jinja Template for Grants Script
+  template:
+    src: ora_grants.py.j2
+    dest: /home/oracle/ora_grants.py
+    owner: oracle
+    group: oinstall
+    mode: "u=rwx,g=rwx,o=rwx"
+
+
+
+- name: Generate User Script SQL
+  raw: /usr/bin/python /home/oracle/ora_user.py
+  become: yes
+  become_user: oracle
+
+
+- name: Check to see if the .SQL file exists
+  stat:
+    path: /home/oracle/create_user_{{username}}.sql
+  register: filename
+
+
+
+- name: Generate Grant Script SQL
+  command: /usr/bin/python /home/oracle/ora_grants.py
+  become: yes
+  become_user: oracle
+  
+
+
+- name: Template Orashell Script
+  template:
+    src: orashell.sh.j2
+    dest: /home/oracle/orashell.sh
+    owner: oracle
+    group: oinstall
+    mode: "u=rwx,g=rwx,o=rwx"
+    
+- name: Execute Script + Set Env Variables
+  shell: /usr/bin/bash /home/oracle/orashell.sh
+  become: yes
+  become_user: oracle
+
+
+- name: Find create user files from directory
+  find:
+    paths: "/home/oracle/"
+    patterns: "create_user_{{username}}.*"
+  register: userscripts
+
+- name: Clean password from files
+  replace:
+    path: "{{item.path}}"
+    regexp: "{{password}}"
+    replace: 'passwdencrypted'
+  with_items: "{{ userscripts.files }}"
