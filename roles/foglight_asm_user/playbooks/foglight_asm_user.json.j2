@@ -1,0 +1,13 @@
+{
+  "Users": [
+    {
+      "username": "{{ username }}",
+      "password": "{{ password }}",
+      "syspriv": [{% for syspriv2 in syspriv.splitlines() %}
+      {"syspriv_vals": " {{syspriv2}} "}
+        {%- if not loop.last %},{% else %}
+        {% endif %}
+        {% endfor %}]
+}
+  ]
+}
