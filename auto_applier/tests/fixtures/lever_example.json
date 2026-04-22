@@ -1,0 +1,14 @@
+[
+  {
+    "id": "lever-001",
+    "text": "Staff Backend Engineer",
+    "hostedUrl": "https://jobs.lever.co/acme/lever-001",
+    "applyUrl": "https://jobs.lever.co/acme/lever-001/apply",
+    "createdAt": 1713600000000,
+    "categories": {"location": "Remote", "team": "Platform", "commitment": "Full Time"},
+    "descriptionPlain": "We are hiring a Staff Engineer to lead our backend services. Python, Go, PostgreSQL.",
+    "lists": [
+      {"text": "You will", "content": "<li>Build scalable APIs</li><li>Mentor the team</li>"}
+    ]
+  }
+]

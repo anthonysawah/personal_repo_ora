@@ -1,0 +1,22 @@
+{
+  "jobs": [
+    {
+      "id": 100001,
+      "title": "Senior Backend Engineer, Payments",
+      "absolute_url": "https://boards.greenhouse.io/stripe/jobs/100001",
+      "location": {"name": "San Francisco, CA / Remote"},
+      "updated_at": "2026-04-20T12:00:00.000Z",
+      "first_published": "2026-04-18T09:00:00.000Z",
+      "content": "<p>We're looking for a backend engineer with experience in Python, Go, distributed systems, and PostgreSQL. You'll work on the payments infrastructure serving millions of merchants. 5+ years experience required.</p><ul><li>Design and build high-throughput payment APIs</li><li>Partner with product on new payment methods</li></ul>"
+    },
+    {
+      "id": 100002,
+      "title": "Frontend Designer",
+      "absolute_url": "https://boards.greenhouse.io/stripe/jobs/100002",
+      "location": {"name": "New York, NY"},
+      "updated_at": "2026-04-19T12:00:00.000Z",
+      "first_published": "2026-04-19T12:00:00.000Z",
+      "content": "<p>We're hiring a product designer with a strong eye for typography and motion. Figma wizardry and some HTML/CSS experience a plus.</p>"
+    }
+  ]
+}

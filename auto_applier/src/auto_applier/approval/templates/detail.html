@@ -1,0 +1,75 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>{{ job.company }} — {{ job.title }}</title>
+  <style>
+    body { font-family: -apple-system, system-ui, sans-serif; margin: 1.5rem; max-width: 1400px; }
+    .row { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+    .col { border: 1px solid #ddd; border-radius: 4px; padding: 1rem; background: #fafafa; }
+    h1 { margin-top: 0; }
+    h2 { font-size: 1.1rem; color: #333; }
+    pre { white-space: pre-wrap; font-size: 0.85rem; }
+    .meta { color: #666; font-size: 0.9rem; margin-bottom: 1rem; }
+    .actions { margin: 1rem 0; }
+    button, a.btn { padding: 0.4rem 0.8rem; margin-right: 0.3rem; cursor: pointer; border: 1px solid #888; border-radius: 3px; text-decoration: none; color: #111; background: #fff; font-size: 0.95rem; }
+    button.primary { background: #111; color: #fff; }
+    .badge { display: inline-block; padding: 0.1rem 0.5rem; background: #eee; border-radius: 3px; font-size: 0.85rem; }
+    iframe { width: 100%; height: 600px; border: 1px solid #ccc; }
+    .bullets li { margin-bottom: 0.3em; }
+    .skills { font-size: 0.9rem; }
+  </style>
+</head>
+<body>
+  <p><a href="/">&larr; Back to queue</a></p>
+  <h1>{{ job.company }} — {{ job.title }}</h1>
+  <div class="meta">
+    <span class="badge">{{ job.ats_kind }}</span>
+    <span class="badge">Score {{ app.fit_score or '—' }}</span>
+    {% if job.location %}<span class="badge">{{ job.location }}</span>{% endif %}
+    &middot; <a href="{{ job.jd_url }}" target="_blank">Job description</a>
+    {% if app.reason %}<br><em>{{ app.reason }}</em>{% endif %}
+  </div>
+
+  <div class="actions">
+    <form method="post" action="/app/{{ app.id }}/approve" style="display:inline">
+      <button class="primary" type="submit">Approve</button>
+    </form>
+    <form method="post" action="/app/{{ app.id }}/skip" style="display:inline">
+      <button type="submit">Skip</button>
+    </form>
+    <a class="btn" href="/app/{{ app.id }}/pdf" target="_blank">View PDF</a>
+    <a class="btn" href="/app/{{ app.id }}/docx">Download DOCX</a>
+  </div>
+
+  <div class="row">
+    <div class="col">
+      <h2>Tailored resume</h2>
+      {% if tailored %}
+      <p><strong>Summary.</strong> {{ tailored.summary }}</p>
+      <p class="skills"><strong>Skills.</strong> {{ tailored.skills | join(' · ') }}</p>
+      {% for role in tailored.experience %}
+      <p><strong>{{ role.company }} — {{ role.title }}</strong> <em>({{ role.start }} – {{ role.end or 'Present' }})</em></p>
+      <ul class="bullets">
+        {% for b in role.bullets %}<li>{{ b }}</li>{% endfor %}
+      </ul>
+      {% endfor %}
+      <p><strong>Keywords used:</strong> {{ tailored.keywords_used | join(', ') }}</p>
+      {% else %}
+      <em>No tailored JSON available.</em>
+      {% endif %}
+    </div>
+    <div class="col">
+      <h2>Job description</h2>
+      <pre>{{ job.jd_text }}</pre>
+    </div>
+  </div>
+
+  {% if app.cover_letter_md %}
+  <div class="col" style="margin-top:1rem">
+    <h2>Cover letter</h2>
+    <pre>{{ app.cover_letter_md }}</pre>
+  </div>
+  {% endif %}
+</body>
+</html>

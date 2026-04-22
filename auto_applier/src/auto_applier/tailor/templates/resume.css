@@ -1,0 +1,28 @@
+@page { size: letter; margin: 0.5in 0.6in; }
+body {
+  font-family: "Helvetica", "Arial", sans-serif;
+  font-size: 10.5pt;
+  line-height: 1.35;
+  color: #111;
+  margin: 0;
+}
+header { margin-bottom: 0.4em; }
+header h1 { font-size: 20pt; margin: 0 0 2pt 0; font-weight: 700; }
+.contact { font-size: 9.5pt; color: #333; margin: 0; }
+h2 {
+  font-size: 11pt;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  border-bottom: 1px solid #222;
+  margin: 0.9em 0 0.3em;
+  padding-bottom: 2pt;
+}
+section { margin-bottom: 0.3em; }
+.role, .project, .edu { margin-bottom: 0.5em; }
+.role-header { display: flex; justify-content: space-between; align-items: baseline; }
+.dates { font-size: 9.5pt; color: #555; white-space: nowrap; }
+ul { margin: 0.25em 0 0.4em 1.1em; padding: 0; }
+li { margin: 0.1em 0; }
+p { margin: 0.25em 0; }
+.skills { font-size: 10pt; }
+a { color: #111; text-decoration: none; }

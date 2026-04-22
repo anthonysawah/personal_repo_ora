@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>{{ name }} — Resume</title>
+  <style>{{ css }}</style>
+</head>
+<body>
+  <header>
+    <h1>{{ name }}</h1>
+    <p class="contact">
+      {% if email %}{{ email }}{% endif %}
+      {% if phone %} · {{ phone }}{% endif %}
+      {% if location %} · {{ location }}{% endif %}
+      {% if linkedin_url %} · <a href="{{ linkedin_url }}">{{ linkedin_url|replace('https://','')|replace('http://','') }}</a>{% endif %}
+      {% if github_url %} · <a href="{{ github_url }}">{{ github_url|replace('https://','')|replace('http://','') }}</a>{% endif %}
+    </p>
+  </header>
+
+  {% if tailored.summary %}
+  <section>
+    <h2>Summary</h2>
+    <p>{{ tailored.summary }}</p>
+  </section>
+  {% endif %}
+
+  {% if tailored.skills %}
+  <section>
+    <h2>Skills</h2>
+    <p class="skills">{{ tailored.skills | join(' · ') }}</p>
+  </section>
+  {% endif %}
+
+  {% if tailored.experience %}
+  <section>
+    <h2>Experience</h2>
+    {% for role in tailored.experience %}
+    <div class="role">
+      <div class="role-header">
+        <strong>{{ role.company }}</strong> — {{ role.title }}
+        <span class="dates">{{ role.start }} – {{ role.end or 'Present' }}{% if role.location %} · {{ role.location }}{% endif %}</span>
+      </div>
+      {% if role.bullets %}
+      <ul>
+        {% for b in role.bullets %}<li>{{ b }}</li>{% endfor %}
+      </ul>
+      {% endif %}
+    </div>
+    {% endfor %}
+  </section>
+  {% endif %}
+
+  {% if tailored.projects %}
+  <section>
+    <h2>Projects</h2>
+    {% for p in tailored.projects %}
+    <div class="project">
+      <strong>{{ p.name }}</strong>{% if p.description %} — {{ p.description }}{% endif %}
+      {% if p.url %} · <a href="{{ p.url }}">{{ p.url|replace('https://','')|replace('http://','') }}</a>{% endif %}
+      {% if p.bullets %}
+      <ul>{% for b in p.bullets %}<li>{{ b }}</li>{% endfor %}</ul>
+      {% endif %}
+    </div>
+    {% endfor %}
+  </section>
+  {% endif %}
+
+  {% if tailored.education %}
+  <section>
+    <h2>Education</h2>
+    {% for ed in tailored.education %}
+    <div class="edu">
+      <strong>{{ ed.institution }}</strong> — {{ ed.degree }}{% if ed.field %}, {{ ed.field }}{% endif %}
+      <span class="dates">{{ ed.start }} – {{ ed.end }}</span>
+      {% if ed.honors %}<br><em>{{ ed.honors | join(', ') }}</em>{% endif %}
+    </div>
+    {% endfor %}
+  </section>
+  {% endif %}
+</body>
+</html>
