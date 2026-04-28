@@ -10,7 +10,13 @@ python -m venv .venv && source .venv/bin/activate
 pip install -e '.[dev]'
 cp .env.example .env   # fill in ANTHROPIC_API_KEY
 auto_applier init      # scaffolds data/profile.yaml + data/base_resume.md
-# edit data/profile.yaml and data/base_resume.md
+
+# Option A — bootstrap the profile from a folder of existing resumes
+mkdir -p data/ingest && cp ~/Downloads/sawah_resumes/*.{pdf,docx} data/ingest/
+auto_applier ingest --src data/ingest    # writes data/profile.yaml + data/base_resume.md
+
+# Option B — fill in data/profile.yaml + data/base_resume.md by hand
+
 auto_applier doctor
 auto_applier run-daily
 auto_applier review    # opens http://127.0.0.1:8765 to approve

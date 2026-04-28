@@ -53,6 +53,30 @@ def init(
 
 
 @app.command()
+def ingest(
+    src: Path = typer.Option(
+        Path("data/ingest"),
+        "--src",
+        help="Folder of resume PDFs/DOCXs to merge into a master profile.",
+    ),
+    dry_run: bool = typer.Option(False, "--dry-run", help="Just dedupe + count, don't call Claude."),
+    workers: int = typer.Option(6, "--workers", help="Parallel extraction workers."),
+) -> None:
+    """Ingest a folder of resumes into a master profile.yaml + base_resume.md.
+
+    Walks --src for .pdf/.docx/.txt/.md files, dedupes near-identical ones via
+    rapidfuzz, then uses Claude Haiku to extract structured fragments per resume
+    and Claude Sonnet to merge them into one master profile + strong base resume.
+    Overwrites data/profile.yaml and data/base_resume.md.
+    """
+    from .profile.resume_ingest import ingest as do_ingest
+
+    init_db()
+    stats = do_ingest(src, dry_run=dry_run, max_workers=workers)
+    console.print_json(data=stats)
+
+
+@app.command()
 def doctor() -> None:
     """Validate environment, DB, profile, and Anthropic connectivity."""
     ok = True
