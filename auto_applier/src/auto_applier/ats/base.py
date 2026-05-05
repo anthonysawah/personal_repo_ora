@@ -26,6 +26,12 @@ class SubmitContext:
     resume_docx_path: Path | None = None
     answers: dict[str, str] = field(default_factory=dict)
     dry_run: bool = False
+    # How to handle open-ended essay questions (Workday/iCIMS often have these):
+    #   "flag"       — bail with needs_human (safest, default behavior pre-override)
+    #   "attempt"    — compose a grounded answer using profile facts only; blank if nothing
+    #   "aggressive" — always answer; extrapolate within domain/seniority, never invent
+    #                  specific companies/dates/events the candidate never had
+    essay_mode: str = "attempt"
 
 
 class SubmitterAdapter(Protocol):

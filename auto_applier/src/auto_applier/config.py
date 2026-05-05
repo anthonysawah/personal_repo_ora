@@ -28,6 +28,7 @@ class Settings(BaseSettings):
     linkedin_enabled: bool = False
 
     playwright_headless: bool = False
+    submit_essay_mode: str = "attempt"  # flag | attempt | aggressive
 
     @property
     def profile_path(self) -> Path:

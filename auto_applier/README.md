@@ -53,12 +53,22 @@ By default Playwright runs headful so you can watch + intervene. Set
 `PLAYWRIGHT_HEADLESS=true` in `.env` once you trust it. Screenshots of every
 step are saved under `data/artifacts/<date>/app-<id>/playwright/`.
 
+**Essay mode** (controls how it handles open-ended questions like "describe
+a time you failed" or "why this company"):
+
+| Mode | Behavior |
+|---|---|
+| `flag` | Bail with `needs_human`. Safest. |
+| `attempt` (default) | Compose a grounded answer (~150–220 words) using only profile facts. Blank if no material. |
+| `aggressive` | Always answer. Extrapolate plausibly within domain/seniority. Won't invent companies/dates the candidate didn't have. |
+
+Set via `SUBMIT_ESSAY_MODE` in `.env`, or per-run with `auto_applier submit
+--essay-mode aggressive`.
+
 **What it can't do (yet):**
-- Solve captchas (it stops + flags for human takeover)
+- Solve captchas (stops + flags for human takeover)
 - Create accounts on Workday / iCIMS for first-time applicants (login walls
   cause an immediate failure with a "needs human" message)
-- Open-ended essay questions ("describe a time you failed") — the model is
-  instructed not to fabricate, so it'll flag `needs_human` and return.
 
 ## Notes
 

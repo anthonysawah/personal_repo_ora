@@ -190,10 +190,17 @@ def review(
 def submit(
     dry_run: bool = typer.Option(False, "--dry-run", help="Log submissions without hitting network."),
     limit: Optional[int] = typer.Option(None, "--limit"),
+    essay_mode: Optional[str] = typer.Option(
+        None,
+        "--essay-mode",
+        help="How to handle open-ended essay questions: flag | attempt | aggressive. Defaults to SUBMIT_ESSAY_MODE env (=attempt).",
+    ),
 ) -> None:
     """Submit all approved applications via the matched ATS adapter."""
     init_db()
-    stats = run_submit(dry_run=dry_run, limit=limit)
+    if essay_mode and essay_mode not in {"flag", "attempt", "aggressive"}:
+        raise typer.BadParameter("--essay-mode must be one of: flag, attempt, aggressive")
+    stats = run_submit(dry_run=dry_run, limit=limit, essay_mode=essay_mode)
     console.print_json(data=stats)
 
 

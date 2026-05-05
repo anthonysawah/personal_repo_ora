@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from auto_applier.ats.playwright_generic import (
     _ActionPlan,
+    _build_system_instructions,
     _profile_compact_yaml,
     is_captcha_present,
     is_confirmation_present,
@@ -55,6 +56,30 @@ def test_profile_compact_yaml_drops_bulk():
     assert "x" * 100 not in out
     # And a key not in the keep list isn't either
     assert "must_have_skills" not in out
+
+
+def test_essay_mode_changes_system_prompt():
+    flag_text = _build_system_instructions("flag")
+    attempt_text = _build_system_instructions("attempt")
+    aggressive_text = _build_system_instructions("aggressive")
+
+    assert "needs_human" in flag_text
+    assert "Do not fabricate" in flag_text or "Do not\nfabricate" in flag_text or "fabricate" in flag_text
+
+    # attempt mode tells it to compose grounded answers
+    assert "thoughtful answer" in attempt_text
+    assert "Do not\ninvent" in attempt_text or "Do not invent" in attempt_text
+
+    # aggressive mode tells it to always answer
+    assert "Always answer every question" in aggressive_text
+    assert "extrapolate" in aggressive_text
+
+    # All three differ
+    assert flag_text != attempt_text != aggressive_text
+
+    # Unknown mode falls back to attempt
+    fallback = _build_system_instructions("invalid-mode")
+    assert fallback == attempt_text
 
 
 def test_action_plan_validates():

@@ -75,49 +75,81 @@ class _ActionPlan(BaseModel):
     reason: str = ""
 
 
-_SYSTEM_INSTRUCTIONS = """\
-You are a job-application form-filler. Each turn, I will show you:
-  - a screenshot of the candidate's browser
-  - a JSON list of visible form elements (each with selector/label/type/options)
-  - the candidate's profile and a Q&A bank for common application questions
-  - the actions you have already taken on this page (so you don't repeat)
-  - the URL and ATS kind
-
-Your job: return a JSON action plan that fills the visible form using the
-candidate's information, then either clicks Next/Continue (multi-step) or
-clicks the final Submit button. NEVER fabricate information that isn't in
-the profile/qa_bank.
-
-Action types you may use:
-  - {"type": "fill",   "selector": "<css>", "value": "<text>"}
-  - {"type": "select", "selector": "<css>", "value": "<option>"}
-  - {"type": "check",  "selector": "<css>"}
-  - {"type": "click",  "selector": "<css>"}
-  - {"type": "upload_resume", "selector": "<css>"}    # uploads tailored PDF resume
-  - {"type": "wait",   "ms": 1500}
-  - {"type": "scroll", "selector": "<css>"}            # scroll element into view
-
-Rules:
-  - Use the EXACT selector strings I give you in the elements JSON.
-  - Match each form field to the most relevant profile/qa_bank entry. If a
-    field has no good match (e.g. "describe a time you failed" essay), set
-    "needs_human": true and explain in "reason". Don't make up answers.
-  - If the page has clearly navigated to a confirmation/thank-you state,
-    set "done": true and return an empty actions list.
-  - Prefer clicking Next/Continue over Submit unless this is the final page
-    AND the form is fully filled. Submitting too early loses progress.
-  - If you see a captcha, set "needs_human": true with reason "captcha".
-  - If you see a login wall asking to create an account, set "needs_human"
-    true with reason "login_required: <url>".
-
-Output format (JSON only, no prose):
-{
-  "actions": [...],
-  "done": false,
-  "needs_human": false,
-  "reason": ""
+_ESSAY_GUIDANCE = {
+    "flag": (
+        "ESSAY HANDLING: For open-ended essay/free-text questions ('describe a "
+        "time you failed', 'why this company', etc.) that aren't directly answered "
+        "in the qa_bank, set \"needs_human\": true with a clear reason. Do not "
+        "fabricate."
+    ),
+    "attempt": (
+        "ESSAY HANDLING: For open-ended essay/free-text questions, compose a "
+        "thoughtful answer (~120–220 words) drawing ONLY on facts in the "
+        "candidate's profile, experience bullets, projects, and qa_bank. Do not "
+        "invent companies, dates, skills, certifications, or specific past events "
+        "the candidate never had. Use first-person voice, concrete examples from "
+        "their actual work, and language consistent with their seniority. If you "
+        "truly have no profile material to ground an answer in, leave the field "
+        "blank — but PREFER to write something grounded over flagging needs_human."
+    ),
+    "aggressive": (
+        "ESSAY HANDLING: Always answer every question. For open-ended essays, "
+        "compose a thoughtful answer (~150–250 words) consistent with the "
+        "candidate's domain, seniority, and stated values. Stay anchored to "
+        "their profile (companies, technologies, scope), but feel free to "
+        "extrapolate plausible specifics — meetings, decisions, lessons — that "
+        "are consistent with the kind of work they've described. Never invent "
+        "companies, dates, certifications, or roles they never held. Never set "
+        "needs_human for an essay; only for captchas / login walls / questions "
+        "that require external knowledge of someone else."
+    ),
 }
-"""
+
+
+def _build_system_instructions(essay_mode: str) -> str:
+    guidance = _ESSAY_GUIDANCE.get(essay_mode, _ESSAY_GUIDANCE["attempt"])
+    return (
+        "You are a job-application form-filler. Each turn, I will show you:\n"
+        "  - a screenshot of the candidate's browser\n"
+        "  - a JSON list of visible form elements (each with selector/label/type/options)\n"
+        "  - the candidate's profile and a Q&A bank for common application questions\n"
+        "  - the actions you have already taken on this page (so you don't repeat)\n"
+        "  - the URL and ATS kind\n\n"
+        "Your job: return a JSON action plan that fills the visible form using the\n"
+        "candidate's information, then either clicks Next/Continue (multi-step) or\n"
+        "clicks the final Submit button.\n\n"
+        "Action types you may use:\n"
+        "  - {\"type\": \"fill\",   \"selector\": \"<css>\", \"value\": \"<text>\"}\n"
+        "  - {\"type\": \"select\", \"selector\": \"<css>\", \"value\": \"<option>\"}\n"
+        "  - {\"type\": \"check\",  \"selector\": \"<css>\"}\n"
+        "  - {\"type\": \"click\",  \"selector\": \"<css>\"}\n"
+        "  - {\"type\": \"upload_resume\", \"selector\": \"<css>\"}    # uploads tailored PDF resume\n"
+        "  - {\"type\": \"wait\",   \"ms\": 1500}\n"
+        "  - {\"type\": \"scroll\", \"selector\": \"<css>\"}            # scroll element into view\n\n"
+        "Rules:\n"
+        "  - Use the EXACT selector strings I give you in the elements JSON.\n"
+        "  - For standard fields (name/email/phone/location/work-auth/sponsorship/\n"
+        "    salary/start-date/EEO), pull from personal/work_authorization/qa_bank.\n"
+        "  - For dropdowns/selects, pick the option whose label/value best matches\n"
+        "    the candidate's data.\n"
+        "  - For yes/no questions like 'do you require sponsorship', use the\n"
+        "    qa_bank answer directly.\n"
+        f"  - {guidance}\n"
+        "  - If the page has clearly navigated to a confirmation/thank-you state,\n"
+        "    set \"done\": true and return an empty actions list.\n"
+        "  - Prefer clicking Next/Continue over Submit unless this is the final page\n"
+        "    AND the form is fully filled. Submitting too early loses progress.\n"
+        "  - If you see a captcha, set \"needs_human\": true with reason \"captcha\".\n"
+        "  - If you see a login wall asking to create an account, set \"needs_human\"\n"
+        "    true with reason \"login_required: <url>\".\n\n"
+        "Output format (JSON only, no prose):\n"
+        "{\n"
+        "  \"actions\": [...],\n"
+        "  \"done\": false,\n"
+        "  \"needs_human\": false,\n"
+        "  \"reason\": \"\"\n"
+        "}\n"
+    )
 
 
 def _re_any(haystack: str, patterns: list[str]) -> bool:
@@ -255,6 +287,7 @@ def _plan_actions(
     page_url: str,
     ats_kind: str,
     iteration: int,
+    essay_mode: str,
 ) -> _ActionPlan:
     client = _client()
     image_b64 = base64.standard_b64encode(screenshot_png).decode("ascii")
@@ -276,13 +309,20 @@ def _plan_actions(
         },
     ]
 
+    system_text = (
+        _build_system_instructions(essay_mode)
+        + "\n\n<candidate_profile>\n"
+        + profile_compact
+        + "\n</candidate_profile>"
+    )
+
     resp = client.messages.create(
         model=_config.settings.tailor_model,
-        max_tokens=2048,
+        max_tokens=4096,
         system=[
             {
                 "type": "text",
-                "text": _SYSTEM_INSTRUCTIONS + "\n\n<candidate_profile>\n" + profile_compact + "\n</candidate_profile>",
+                "text": system_text,
                 "cache_control": {"type": "ephemeral"},
             }
         ],
@@ -446,6 +486,7 @@ class PlaywrightGenericSubmitter(SubmitterAdapter):
                         page_url=page_url,
                         ats_kind=str(ctx.job.ats_kind),
                         iteration=it,
+                        essay_mode=ctx.essay_mode,
                     )
                 except Exception as e:  # noqa: BLE001
                     browser.close()

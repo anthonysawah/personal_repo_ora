@@ -5,6 +5,7 @@ from pathlib import Path
 
 from sqlmodel import select
 
+from .. import config as _config
 from ..ats import registry
 from ..ats.base import SubmitContext
 from ..db import session_scope
@@ -15,8 +16,13 @@ from ..utils.logging import get_logger
 log = get_logger(__name__)
 
 
-def run_submit(dry_run: bool = False, limit: int | None = None) -> dict:
+def run_submit(
+    dry_run: bool = False,
+    limit: int | None = None,
+    essay_mode: str | None = None,
+) -> dict:
     profile = load_profile()
+    essay_mode = essay_mode or _config.settings.submit_essay_mode
     stats = {"submitted": 0, "failed": 0, "skipped": 0}
 
     with session_scope() as session:
@@ -47,6 +53,7 @@ def run_submit(dry_run: bool = False, limit: int | None = None) -> dict:
                 resume_docx_path=Path(app.resume_docx_path) if app.resume_docx_path else None,
                 answers={q.question: q.answer for q in profile.qa_bank},
                 dry_run=dry_run,
+                essay_mode=essay_mode,
             )
 
             adapter = registry.get(job.ats_kind)
