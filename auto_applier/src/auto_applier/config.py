@@ -27,6 +27,8 @@ class Settings(BaseSettings):
     indeed_enabled: bool = False
     linkedin_enabled: bool = False
 
+    playwright_headless: bool = False
+
     @property
     def profile_path(self) -> Path:
         return self.data_dir / "profile.yaml"
