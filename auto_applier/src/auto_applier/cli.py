@@ -124,9 +124,16 @@ def doctor() -> None:
     raise typer.Exit(0 if ok else 1)
 
 
+_DEFAULT_SOURCES = ["arbeitnow", "remotive", "greenhouse", "lever", "ashby"]
+
+
 @app.command()
 def discover(
-    source: list[str] = typer.Option(["greenhouse"], "--source", help="One or more of: greenhouse, lever, ashby, rss"),
+    source: list[str] = typer.Option(
+        _DEFAULT_SOURCES,
+        "--source",
+        help="One or more of: arbeitnow, remotive, greenhouse, lever, ashby, rss",
+    ),
 ) -> None:
     """Fetch jobs from configured discovery adapters."""
     init_db()
@@ -158,7 +165,7 @@ def tailor(
 
 @app.command(name="run-daily")
 def run_daily_cmd(
-    source: list[str] = typer.Option(["greenhouse"], "--source"),
+    source: list[str] = typer.Option(_DEFAULT_SOURCES, "--source"),
     tailor_limit: Optional[int] = typer.Option(None, "--tailor-limit"),
 ) -> None:
     """Full pipeline: discover → score → tailor."""

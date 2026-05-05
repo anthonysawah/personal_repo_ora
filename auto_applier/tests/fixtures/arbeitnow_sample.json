@@ -1,0 +1,39 @@
+{
+  "data": [
+    {
+      "slug": "stripe-senior-sre",
+      "company_name": "Stripe",
+      "title": "Senior Site Reliability Engineer",
+      "description": "<p>Looking for an SRE with Python and distributed systems experience.</p>",
+      "remote": true,
+      "url": "https://boards.greenhouse.io/stripe/jobs/123",
+      "tags": ["sre", "python"],
+      "job_types": ["fulltime"],
+      "location": "Remote / SF",
+      "created_at": 1714185600
+    },
+    {
+      "slug": "oracle-cloud-engineer",
+      "company_name": "Oracle",
+      "title": "Cloud Engineer",
+      "description": "<p>Work on Oracle Cloud Infrastructure.</p>",
+      "remote": false,
+      "url": "https://oracle.com/careers/123",
+      "tags": [],
+      "location": "Austin, TX",
+      "created_at": 1714185601
+    },
+    {
+      "slug": "acme-frontend-design",
+      "company_name": "Acme Design Co",
+      "title": "Senior Product Designer",
+      "description": "<p>Figma wizardry. Motion design.</p>",
+      "remote": true,
+      "url": "https://jobs.lever.co/acme/123",
+      "tags": ["design"],
+      "location": "Remote",
+      "created_at": 1714185602
+    }
+  ],
+  "links": {"next": null}
+}

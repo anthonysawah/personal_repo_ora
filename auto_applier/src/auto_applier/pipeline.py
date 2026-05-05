@@ -10,6 +10,7 @@ from sqlmodel import select
 from . import config as _config
 from .db import session_scope
 from .discovery import load_adapters
+from .discovery.filters import ExcludeRules
 from .models import Application, AppStatus, Job
 from .profile.loader import load_base_resume, load_profile
 from .scoring.filter import passes_prefilter, prefilter_score
@@ -31,13 +32,20 @@ def _load_companies_config() -> dict:
 def run_discover(sources: list[str] | None = None) -> dict:
     config = _load_companies_config()
     adapters = load_adapters(sources)
-    stats = {"seen": 0, "inserted": 0, "duplicate": 0}
+    excludes = ExcludeRules.from_config(config)
+    stats = {"seen": 0, "inserted": 0, "duplicate": 0, "excluded": 0}
 
     with session_scope() as session:
         for adapter in adapters:
             log.info("discovery: running adapter=%s", adapter.name)
             for listing in adapter.fetch(config):
                 stats["seen"] += 1
+                excluded, reason = excludes.is_excluded(listing)
+                if excluded:
+                    stats["excluded"] += 1
+                    log.debug("skipped %s @ %s — %s", listing.title, listing.company, reason)
+                    continue
+
                 dedupe = listing.dedupe_hash()
                 exists = session.exec(
                     select(Job).where(Job.dedupe_hash == dedupe)

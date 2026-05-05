@@ -24,4 +24,12 @@ def load_adapters(sources: list[str] | None = None) -> list[DiscoveryAdapter]:
             from .rss import RSSAdapter
 
             out.append(RSSAdapter())
+        elif name == "arbeitnow":
+            from .arbeitnow import ArbeitnowAdapter
+
+            out.append(ArbeitnowAdapter())
+        elif name == "remotive":
+            from .remotive import RemotiveAdapter
+
+            out.append(RemotiveAdapter())
     return out

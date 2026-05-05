@@ -140,10 +140,48 @@ Tools: …
 """
 
 COMPANIES_TEMPLATE = """\
-# List companies to discover jobs from, grouped by ATS adapter.
-# `slug` is the company's subdomain / board token on the ATS (e.g. for
-# boards-api.greenhouse.io/v1/boards/<slug>/jobs, the slug is the segment).
+# Discovery + filtering config. The pipeline pulls jobs from these sources,
+# excludes anything matching the rules below, then scores + tailors the rest.
 
+# ---- Companies you NEVER want to see ----
+# `companies` is a case-insensitive substring match against the company name.
+# `keywords` is a case-insensitive match against the job description text.
+exclude:
+  companies:
+    - Oracle
+    - Beacon Hill Staffing
+    - CVS
+  keywords: []
+    # - "secret clearance required"
+    # - "must be a US Citizen and able to obtain TS/SCI"
+
+# ---- Broad search across many companies (recommended) ----
+# These are aggregators with public APIs. They auto-discover jobs across
+# thousands of company career sites without you maintaining a slug list.
+search:
+  queries:
+    - "site reliability engineer"
+    - "SRE manager"
+    - "platform engineer"
+    - "infrastructure engineer"
+    - "devops engineer"
+  remote_ok: true
+
+# arbeitnow.com — broad coverage across Greenhouse / Lever / Ashby / Workday
+arbeitnow:
+  enabled: true
+  remote_only: false
+  max_pages: 5
+
+# remotive.com — remote jobs only, software-dev category by default
+remotive:
+  enabled: true
+  category: software-dev
+  limit: 100
+
+# ---- Targeted per-company sources (use these for must-see companies) ----
+# `slug` is the company's board token on the ATS (e.g. for
+# boards-api.greenhouse.io/v1/boards/<slug>/jobs, the slug is the segment).
 greenhouse:
   - slug: stripe
   - slug: airbnb
