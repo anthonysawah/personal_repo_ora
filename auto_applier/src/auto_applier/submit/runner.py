@@ -20,13 +20,21 @@ def _recent_submission_companies(session, cooldown_days: int) -> set[str]:
     """Return lowercased company names already submitted-to within the cooldown window."""
     if cooldown_days <= 0:
         return set()
-    cutoff = datetime.now(timezone.utc) - timedelta(days=cooldown_days)
+    # SQLite stores datetimes as naive strings; normalize both sides to
+    # naive UTC for comparison.
+    now_naive = datetime.now(timezone.utc).replace(tzinfo=None)
+    cutoff = now_naive - timedelta(days=cooldown_days)
     rows = session.exec(
         select(Application).where(Application.status == AppStatus.submitted)
     ).all()
     out: set[str] = set()
     for a in rows:
-        if not a.submitted_at or a.submitted_at < cutoff:
+        sub = a.submitted_at
+        if sub is None:
+            continue
+        if sub.tzinfo is not None:
+            sub = sub.astimezone(timezone.utc).replace(tzinfo=None)
+        if sub < cutoff:
             continue
         job = session.get(Job, a.job_id)
         if job and job.company:
