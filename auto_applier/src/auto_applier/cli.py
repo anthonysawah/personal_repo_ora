@@ -195,13 +195,48 @@ def submit(
         "--essay-mode",
         help="How to handle open-ended essay questions: flag | attempt | aggressive. Defaults to SUBMIT_ESSAY_MODE env (=attempt).",
     ),
+    cooldown_days: Optional[int] = typer.Option(
+        None,
+        "--cooldown-days",
+        help="Don't submit to a company you've submitted to within the last N days. Defaults to SUBMIT_PER_COMPANY_COOLDOWN_DAYS env (=14). 0 disables.",
+    ),
 ) -> None:
     """Submit all approved applications via the matched ATS adapter."""
     init_db()
     if essay_mode and essay_mode not in {"flag", "attempt", "aggressive"}:
         raise typer.BadParameter("--essay-mode must be one of: flag, attempt, aggressive")
-    stats = run_submit(dry_run=dry_run, limit=limit, essay_mode=essay_mode)
+    stats = run_submit(
+        dry_run=dry_run, limit=limit, essay_mode=essay_mode, cooldown_days=cooldown_days
+    )
     console.print_json(data=stats)
+
+
+@app.command()
+def usage(
+    today: bool = typer.Option(False, "--today", help="Show today's spend summary."),
+) -> None:
+    """Show Anthropic API spend by stage and day."""
+    from .budget import today_usage as _today_usage
+    from .models import Usage as _Usage
+
+    init_db()
+    if today:
+        u = _today_usage()
+        console.print_json(data={"day": u.day, "cost_usd": round(u.cost_usd, 4), "calls": u.rows})
+        return
+
+    with session_scope() as session:
+        rows = session.exec(select(_Usage)).all()
+
+    by_day: dict[str, dict] = {}
+    for r in rows:
+        d = by_day.setdefault(r.day, {"cost_usd": 0.0, "calls": 0, "stages": {}})
+        d["cost_usd"] += r.cost_usd
+        d["calls"] += 1
+        d["stages"][r.stage] = round(d["stages"].get(r.stage, 0.0) + r.cost_usd, 4)
+    for d in by_day.values():
+        d["cost_usd"] = round(d["cost_usd"], 4)
+    console.print_json(data=by_day)
 
 
 @app.command()
@@ -221,6 +256,20 @@ def status(
     for s in AppStatus:
         t.add_row(f"Apps · {s.value}", str(sum(1 for a in apps if a.status == s)))
     console.print(t)
+
+
+@app.command(name="track-outcomes")
+def track_outcomes_cmd(
+    lookback_days: Optional[int] = typer.Option(
+        None, "--lookback-days", help="How many days of mail to scan."
+    ),
+) -> None:
+    """Scan IMAP inbox for application replies (confirmation/interview/rejection)."""
+    from .tracking.outcomes import fetch_outcomes
+
+    init_db()
+    stats = fetch_outcomes(lookback_days=lookback_days)
+    console.print_json(data=stats)
 
 
 @app.command(name="export-profile-schema")

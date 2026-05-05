@@ -7,6 +7,7 @@ from typing import Optional
 import anthropic
 from pydantic import BaseModel, Field
 
+from .. import budget as _budget
 from .. import config as _config
 from ..profile.schema import Education, Profile
 from .prompts import build_cached_system, build_user_message
@@ -63,13 +64,26 @@ def tailor_resume(
     company: str,
     jd_text: str,
     model: Optional[str] = None,
+    extra_user_note: str = "",
 ) -> tuple[TailoredResume, dict]:
-    """Returns (tailored, usage_info)."""
+    """Returns (tailored, usage_info). `extra_user_note` is appended to the user
+    message — used by the dashboard's "retailor with note" feature."""
+    _budget.assert_under_budget("tailor")
     client = _client()
     system_text = build_cached_system(profile, base_resume_md)
+    use_model = model or _config.settings.tailor_model
+
+    user_msg = build_user_message(title, company, jd_text)
+    if extra_user_note.strip():
+        user_msg = (
+            user_msg
+            + "\n\n<additional_instructions from=\"user\">\n"
+            + extra_user_note.strip()
+            + "\n</additional_instructions>"
+        )
 
     resp = client.messages.create(
-        model=model or _config.settings.tailor_model,
+        model=use_model,
         max_tokens=4096,
         system=[
             {
@@ -78,11 +92,10 @@ def tailor_resume(
                 "cache_control": {"type": "ephemeral"},
             }
         ],
-        messages=[
-            {"role": "user", "content": build_user_message(title, company, jd_text)}
-        ],
+        messages=[{"role": "user", "content": user_msg}],
     )
 
+    _budget.record_from_response(stage="tailor", model=use_model, usage=resp.usage)
     text = next((b.text for b in resp.content if b.type == "text"), "")
     data = json.loads(_strip_fences(text))
     tailored = TailoredResume.model_validate(data)

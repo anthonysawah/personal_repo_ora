@@ -26,6 +26,7 @@ from typing import Optional
 import yaml
 from pydantic import BaseModel, Field
 
+from .. import budget as _budget
 from .. import config as _config
 from ..utils.logging import get_logger
 from .base import SubmitContext, SubmitResult, SubmitterAdapter
@@ -173,7 +174,67 @@ def is_login_wall(html_or_text: str, url: str = "") -> bool:
     return _re_any(html_or_text or "", LOGIN_PATTERNS)
 
 
-def _profile_compact_yaml(profile_dict: dict) -> str:
+_STATE_NAMES = {
+    "AL": "Alabama", "AK": "Alaska", "AZ": "Arizona", "AR": "Arkansas",
+    "CA": "California", "CO": "Colorado", "CT": "Connecticut", "DE": "Delaware",
+    "FL": "Florida", "GA": "Georgia", "HI": "Hawaii", "ID": "Idaho",
+    "IL": "Illinois", "IN": "Indiana", "IA": "Iowa", "KS": "Kansas",
+    "KY": "Kentucky", "LA": "Louisiana", "ME": "Maine", "MD": "Maryland",
+    "MA": "Massachusetts", "MI": "Michigan", "MN": "Minnesota", "MS": "Mississippi",
+    "MO": "Missouri", "MT": "Montana", "NE": "Nebraska", "NV": "Nevada",
+    "NH": "New Hampshire", "NJ": "New Jersey", "NM": "New Mexico", "NY": "New York",
+    "NC": "North Carolina", "ND": "North Dakota", "OH": "Ohio", "OK": "Oklahoma",
+    "OR": "Oregon", "PA": "Pennsylvania", "RI": "Rhode Island", "SC": "South Carolina",
+    "SD": "South Dakota", "TN": "Tennessee", "TX": "Texas", "UT": "Utah",
+    "VT": "Vermont", "VA": "Virginia", "WA": "Washington", "WV": "West Virginia",
+    "WI": "Wisconsin", "WY": "Wyoming", "DC": "District of Columbia",
+}
+
+
+def _job_location_states(job_location: str | None) -> set[str]:
+    """Return the set of US state codes mentioned in a free-form job location string."""
+    if not job_location:
+        return set()
+    text = job_location.upper()
+    found: set[str] = set()
+    for code, name in _STATE_NAMES.items():
+        # word-boundary match against the state code OR the state name
+        if re.search(rf"\b{re.escape(code)}\b", text):
+            found.add(code)
+        if re.search(rf"\b{re.escape(name.upper())}\b", text):
+            found.add(code)
+    return found
+
+
+def _select_address_for_job(profile_dict: dict, job_location: str | None) -> dict:
+    """Pick the best-matching address (primary or one of additional_addresses)."""
+    personal = profile_dict.get("personal") or {}
+    primary = {
+        "label": "Primary",
+        "street": personal.get("street", ""),
+        "city": personal.get("city", ""),
+        "state": personal.get("state", ""),
+        "zip": personal.get("zip", ""),
+        "country": personal.get("country", "USA"),
+    }
+    job_states = _job_location_states(job_location)
+    if not job_states:
+        return primary
+    for addr in personal.get("additional_addresses", []) or []:
+        states = {s.upper() for s in (addr.get("use_for_states") or [])}
+        if states & job_states:
+            return {
+                "label": addr.get("label", "Alternate"),
+                "street": addr.get("street", ""),
+                "city": addr.get("city", ""),
+                "state": addr.get("state", ""),
+                "zip": addr.get("zip", ""),
+                "country": addr.get("country", "USA"),
+            }
+    return primary
+
+
+def _profile_compact_yaml(profile_dict: dict, job_location: str | None = None) -> str:
     """Emit a compact profile representation for the prompt (drop bulk like full bullets)."""
     keep_keys = (
         "personal",
@@ -186,6 +247,10 @@ def _profile_compact_yaml(profile_dict: dict) -> str:
         "qa_bank",
     )
     compact = {k: profile_dict.get(k) for k in keep_keys if profile_dict.get(k)}
+    # Resolve the address for this specific job and surface it as a top-level
+    # `selected_address` so the model doesn't have to guess which one to use.
+    selected = _select_address_for_job(profile_dict, job_location)
+    compact["selected_address"] = selected
     return yaml.safe_dump(compact, sort_keys=False, allow_unicode=True)
 
 
@@ -316,8 +381,10 @@ def _plan_actions(
         + "\n</candidate_profile>"
     )
 
+    _budget.assert_under_budget("submit")
+    use_model = _config.settings.tailor_model
     resp = client.messages.create(
-        model=_config.settings.tailor_model,
+        model=use_model,
         max_tokens=4096,
         system=[
             {
@@ -328,6 +395,7 @@ def _plan_actions(
         ],
         messages=[{"role": "user", "content": user_blocks}],
     )
+    _budget.record_from_response(stage="submit", model=use_model, usage=resp.usage)
     text = next((b.text for b in resp.content if b.type == "text"), "")
     data = json.loads(_strip_fences(text))
     return _ActionPlan.model_validate(data)
@@ -400,7 +468,7 @@ class PlaywrightGenericSubmitter(SubmitterAdapter):
         art_dir.mkdir(parents=True, exist_ok=True)
 
         profile_dict = ctx.profile.model_dump()
-        profile_compact = _profile_compact_yaml(profile_dict)
+        profile_compact = _profile_compact_yaml(profile_dict, job_location=ctx.job.location)
         history: list[dict] = []
         last_screenshot_path: str | None = None
 

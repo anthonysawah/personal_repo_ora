@@ -109,6 +109,64 @@ def skip(app_id: int):
     return RedirectResponse("/", status_code=303)
 
 
+@app.post("/app/{app_id}/retailor")
+async def retailor(app_id: int, request: Request):
+    """Re-tailor with a free-text note (e.g. 'emphasize Kubernetes')."""
+    form = await request.form()
+    note = (form.get("note") or "").strip()
+
+    from datetime import datetime, timezone
+    from pathlib import Path
+
+    from ..config import settings as _settings
+    from ..profile.loader import load_base_resume, load_profile
+    from ..tailor.render_docx import render_docx
+    from ..tailor.render_pdf import render_pdf
+    from ..tailor.tailor import tailor_resume
+
+    profile = load_profile()
+    base_resume = load_base_resume()
+
+    with session_scope() as session:
+        a = session.get(Application, app_id)
+        if not a:
+            raise HTTPException(404)
+        job = session.get(Job, a.job_id)
+        if not job:
+            raise HTTPException(404)
+
+    try:
+        tailored, _usage = tailor_resume(
+            profile,
+            base_resume,
+            title=job.title,
+            company=job.company,
+            jd_text=job.jd_text,
+            extra_user_note=note,
+        )
+    except Exception as e:  # noqa: BLE001
+        raise HTTPException(500, detail=f"retailor failed: {e}")
+
+    day = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    art_dir = _settings.artifacts_dir / day / f"app-{app_id}"
+    pdf_path = art_dir / "resume.pdf"
+    docx_path = art_dir / "resume.docx"
+    render_pdf(profile, tailored, pdf_path)
+    render_docx(profile, tailored, docx_path)
+
+    with session_scope() as session:
+        a = session.get(Application, app_id)
+        a.tailored_resume_json = json.dumps(tailored.model_dump())
+        a.resume_pdf_path = str(pdf_path)
+        a.resume_docx_path = str(docx_path)
+        a.cover_letter_md = tailored.cover_letter_md
+        a.status = AppStatus.pending_approval
+        session.add(a)
+        session.commit()
+
+    return RedirectResponse(f"/app/{app_id}", status_code=303)
+
+
 @app.post("/bulk")
 async def bulk(request: Request):
     form = await request.form()

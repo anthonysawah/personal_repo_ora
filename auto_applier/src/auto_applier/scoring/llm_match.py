@@ -8,6 +8,7 @@ import anthropic
 import yaml
 from pydantic import BaseModel, Field
 
+from .. import budget as _budget
 from .. import config as _config
 from ..profile.schema import Profile
 
@@ -54,9 +55,11 @@ def score_fit(
     company: str,
     model: Optional[str] = None,
 ) -> MatchResult:
+    _budget.assert_under_budget("score")
     client = _client()
+    use_model = model or _config.settings.score_model
     resp = client.messages.create(
-        model=model or _config.settings.score_model,
+        model=use_model,
         max_tokens=400,
         system=[
             {
@@ -75,8 +78,8 @@ def score_fit(
             }
         ],
     )
+    _budget.record_from_response(stage="score", model=use_model, usage=resp.usage)
     text = next((b.text for b in resp.content if b.type == "text"), "").strip()
-    # Strip accidental code fences.
     if text.startswith("```"):
         text = text.strip("`")
         if text.lower().startswith("json"):

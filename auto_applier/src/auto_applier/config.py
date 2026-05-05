@@ -29,6 +29,15 @@ class Settings(BaseSettings):
 
     playwright_headless: bool = False
     submit_essay_mode: str = "attempt"  # flag | attempt | aggressive
+    submit_per_company_cooldown_days: int = 14
+
+    # IMAP outcome-tracker settings (live.com / outlook.com / Gmail).
+    imap_host: str = ""        # e.g. outlook.office365.com or imap.gmail.com
+    imap_port: int = 993
+    imap_user: str = ""
+    imap_password: str = ""    # App Password — see README
+    imap_folder: str = "INBOX"
+    imap_lookback_days: int = 30
 
     @property
     def profile_path(self) -> Path:

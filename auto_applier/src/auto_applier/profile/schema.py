@@ -5,16 +5,34 @@ from typing import Optional
 from pydantic import BaseModel, Field
 
 
+class Address(BaseModel):
+    label: str = "Primary"
+    street: str = ""
+    city: str = ""
+    state: str = ""
+    zip: str = ""
+    country: str = "USA"
+    # If a job's location matches any of these states / regions, the form-filler
+    # will prefer this address over the primary one in `personal`. Empty list
+    # means this address is never auto-selected by location.
+    use_for_states: list[str] = Field(default_factory=list)
+
+
 class Personal(BaseModel):
     full_name: str = ""
     email: str = ""
     phone: str = ""
+    street: str = ""
     city: str = ""
     state: str = ""
+    zip: str = ""
     country: str = ""
     linkedin_url: str = ""
     github_url: str = ""
     portfolio_url: str = ""
+    # Alternate addresses (e.g. a Texas address used when applying to TX-based
+    # roles). The Playwright submitter selects the best match by job location.
+    additional_addresses: list[Address] = Field(default_factory=list)
 
 
 class WorkAuth(BaseModel):

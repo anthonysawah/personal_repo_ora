@@ -89,3 +89,20 @@ class Run(SQLModel, table=True):
     ended_at: Optional[datetime] = None
     stats_json: Optional[str] = None
     error: Optional[str] = None
+
+
+class Usage(SQLModel, table=True):
+    """Token usage row per Claude call. Used by the daily-budget kill-switch."""
+
+    __tablename__ = "usage"
+
+    id: Optional[int] = Field(default=None, primary_key=True)
+    day: str = Field(index=True)  # YYYY-MM-DD UTC
+    stage: str  # "score" | "tailor" | "ingest" | "submit" | other
+    model: str
+    input_tokens: int = 0
+    output_tokens: int = 0
+    cache_read_input_tokens: int = 0
+    cache_creation_input_tokens: int = 0
+    cost_usd: float = 0.0
+    created_at: datetime = Field(default_factory=utcnow)

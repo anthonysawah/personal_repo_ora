@@ -26,6 +26,7 @@ import yaml
 from pydantic import BaseModel, Field
 from rapidfuzz import fuzz
 
+from .. import budget as _budget
 from .. import config as _config
 from ..utils.logging import get_logger
 from .schema import Profile
@@ -204,6 +205,7 @@ def _strip_fences(text: str) -> str:
 
 
 def _extract_one(client: anthropic.Anthropic, doc: ResumeDoc, model: str) -> _PartialProfile:
+    _budget.assert_under_budget("ingest")
     resp = client.messages.create(
         model=model,
         max_tokens=4096,
@@ -224,6 +226,7 @@ def _extract_one(client: anthropic.Anthropic, doc: ResumeDoc, model: str) -> _Pa
             }
         ],
     )
+    _budget.record_from_response(stage="ingest", model=model, usage=resp.usage)
     text = next((b.text for b in resp.content if b.type == "text"), "")
     data = json.loads(_strip_fences(text))
     return _PartialProfile.model_validate(data)
@@ -275,9 +278,11 @@ def merge_to_master(
         + "\n</canonical_resume>\n\nReturn the JSON object."
     )
 
+    _budget.assert_under_budget("ingest")
     client = _client()
+    use_model = model or _config.settings.tailor_model
     resp = client.messages.create(
-        model=model or _config.settings.tailor_model,  # Sonnet
+        model=use_model,  # Sonnet
         max_tokens=8192,
         system=[
             {
@@ -288,6 +293,7 @@ def merge_to_master(
         ],
         messages=[{"role": "user", "content": user_text}],
     )
+    _budget.record_from_response(stage="ingest", model=use_model, usage=resp.usage)
     text = next((b.text for b in resp.content if b.type == "text"), "")
     data = json.loads(_strip_fences(text))
 

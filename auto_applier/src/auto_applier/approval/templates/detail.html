@@ -42,6 +42,17 @@
     <a class="btn" href="/app/{{ app.id }}/docx">Download DOCX</a>
   </div>
 
+  <details style="margin: 0.75rem 0 1.25rem 0; padding: 0.75rem; background: #f6f6f6; border-radius: 4px;">
+    <summary style="cursor: pointer; font-weight: 600;">Retailor with a note</summary>
+    <form method="post" action="/app/{{ app.id }}/retailor" style="margin-top: 0.5rem;">
+      <textarea name="note" rows="3" style="width:100%; box-sizing:border-box; font-family:inherit; font-size:0.95rem; padding:0.4rem;" placeholder="e.g. Emphasize Kubernetes and on-call experience. De-emphasize DBA work. Tighter summary."></textarea>
+      <div style="margin-top:0.4rem;">
+        <button type="submit" class="primary">Regenerate resume + cover letter</button>
+        <span style="color:#666; font-size:0.85rem;">Overwrites the current PDF/DOCX. Costs ~$0.01–0.03.</span>
+      </div>
+    </form>
+  </details>
+
   <div class="row">
     <div class="col">
       <h2>Tailored resume</h2>

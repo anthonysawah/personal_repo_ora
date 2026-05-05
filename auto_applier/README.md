@@ -70,6 +70,61 @@ Set via `SUBMIT_ESSAY_MODE` in `.env`, or per-run with `auto_applier submit
 - Create accounts on Workday / iCIMS for first-time applicants (login walls
   cause an immediate failure with a "needs human" message)
 
+## Cost control
+
+The `usage` table tracks every Claude call. Run:
+
+```sh
+auto_applier usage          # spend per day, broken out by stage
+auto_applier usage --today  # today's running total
+```
+
+`ANTHROPIC_DAILY_BUDGET_USD` (in `.env`) is a hard cap — Claude calls fail
+fast with `BudgetExceededError` once today's spend exceeds it. Set to `0` to
+disable the cap.
+
+## Per-company cooldown
+
+Set `SUBMIT_PER_COMPANY_COOLDOWN_DAYS=14` (default) to prevent submitting
+twice to the same employer within 14 days. Override per-run:
+
+```sh
+auto_applier submit --cooldown-days 30
+auto_applier submit --cooldown-days 0    # disable
+```
+
+## Outcome tracker (IMAP)
+
+`auto_applier track-outcomes` connects to your inbox and matches recent emails
+to your submitted applications by company name. Classifies each as
+`confirmation_received` / `interview_invitation` / `rejection` / unmatched.
+Adds notes to the application's `confirmation_text` field.
+
+Setup (Outlook / live.com):
+1. Enable 2FA on your Microsoft account
+2. Create an App Password at <https://account.microsoft.com/security> → App passwords
+3. Set in `.env`:
+   ```
+   IMAP_HOST=outlook.office365.com
+   IMAP_USER=anthonysawah@live.com
+   IMAP_PASSWORD=<app password>
+   ```
+
+For Gmail:
+1. Enable 2FA, create an App Password at <https://myaccount.google.com/apppasswords>
+2. `IMAP_HOST=imap.gmail.com`, `IMAP_USER=you@gmail.com`, `IMAP_PASSWORD=<app password>`
+
+Run periodically (cron / launchd) — e.g. once an hour:
+```sh
+auto_applier track-outcomes --lookback-days 7
+```
+
+## Retailor with a note
+
+In the approval dashboard, click into any pending application and expand
+"Retailor with a note". Type something like "emphasize Kubernetes and on-call,
+de-emphasize DBA work" — the resume + cover letter regenerate. Cost ~$0.01–0.03.
+
 ## Notes
 
 - LinkedIn / Indeed scraping is off by default (ToS concerns). Enable only if you accept the risk.
